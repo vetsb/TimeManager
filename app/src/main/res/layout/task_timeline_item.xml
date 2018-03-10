@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="RtlSymmetry">
+    <com.github.vipulasri.timelineview.TimelineView
+        android:id="@+id/timeLine"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:markerSize="25dp"
+        app:markerInCenter="false"
+        app:lineSize="4dp"
+        app:marker="@drawable/custom_marker"
+        app:line="@color/colorPrimary"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:paddingLeft="15dp"
+        android:paddingBottom="25dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7 марта."
+                android:textColor="#000000"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/tvStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/lightgray"
+                android:text="@string/start"
+                android:layout_marginLeft="6dp"
+                android:textSize="16sp"
+                android:visibility="gone"
+                android:layout_marginStart="6dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/layoutTime">
+
+            <TextView
+                android:text="@string/time"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/lightgray"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:textSize="18sp"/>
+        </LinearLayout>
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:layout_marginBottom="10dp">-->
+
+            <!--<TextView-->
+                <!--android:text="@string/status"-->
+                <!--android:layout_width="70dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textColor="@color/lightgray"-->
+                <!--android:textSize="16sp"/>-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/tvStatus"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textColor="#000000"-->
+                <!--android:textSize="18sp"/>-->
+        <!--</LinearLayout>-->
+    </LinearLayout>
+</LinearLayout>

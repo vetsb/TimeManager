@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Time Manager</string>
+    <string name="title">Название</string>
+    <string name="date_start">Дата начала</string>
+    <string name="plan_time">Планируемое время</string>
+    <string name="add">Добавить</string>
+    <string name="running_hours">Выполняется:</string>
+    <string name="hours_left">Осталось:</string>
+    <string name="run_now">ВЫПОЛНЯТЬ СЕЙЧАС</string>
+    <string name="read_more">ПОДРОБНЕЕ</string>
+    <string name="tasks_activity_title">Мои занятия</string>
+    <string name="add_task_activity_title">Новое занятие</string>
+    <string name="task_activity_title">Подробнее</string>
+    <string name="date_deadline">Крайний срок</string>
+    <string name="run">Выполнять</string>
+    <string name="complete">Завершить</string>
+    <string name="start">Старт</string>
+    <string name="next">Далее</string>
+    <string name="cancel">Отмена</string>
+    <string name="process">Процесс выполнения:</string>
+    <string name="time">Время:</string>
+    <string name="status">Статус:</string>
+    <string name="run_task_activity_title">Выполнение занятия</string>
+    <string name="stop">Стоп</string>
+    <string name="yes">Да</string>
+    <string name="completion_task">Завершение занятия</string>
+    <string name="completion_task_dialog_text">Текущее время будет добавлено к занятию.</string>
+    <string name="how_work">Оценка эффективности</string>
+    <string name="ready">Готово</string>
+    <string name="not_yet_started">Ещё не начиналось</string>
+</resources>

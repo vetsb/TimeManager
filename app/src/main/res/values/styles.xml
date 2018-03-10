@@ -1,0 +1,55 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerItem</item>
+    </style>
+
+    <style name="AutoHeight">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="MainLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">25dp</item>
+        <item name="android:paddingBottom">25dp</item>
+    </style>
+
+    <style name="EditText" parent="AutoHeight">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:textColorHint">#000000</item>
+        <item name="android:layout_marginBottom">20dp</item>
+    </style>
+
+    <style name="Spinner" parent="AutoHeight">
+        <item name="android:layout_marginBottom">20dp</item>
+    </style>
+
+    <style name="SpinnerItem" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:textColor">#000000</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="TvEditText" parent="@style/Widget.AppCompat.EditText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:background">?attr/editTextBackground</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMediumInverse</item>
+        <item name="android:focusable">false</item>
+    </style>
+
+    <style name="TextInputLayout">
+        <item name="android:textColorHint">#000000</item>
+    </style>
+</resources>
