@@ -3,8 +3,10 @@ package ru.dmitriylebyodkin.timemanager.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -25,6 +27,7 @@ import ru.dmitriylebyodkin.timemanager.Views.TaskView;
 
 public class TaskActivity extends MvpAppCompatActivity implements TaskView {
 
+    private static final String TAG = "myLogs";
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
@@ -38,6 +41,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
     private ExecutionDao executionDao;
     private TimeLineAdapter timeLineAdapter;
     private int seconds;
+    private boolean hasChanges = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +82,21 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
                 runIntent.putExtra("id", intent.getIntExtra("id", 0));
                 startActivityForResult(runIntent, RUN_CODE);
                 break;
+            case R.id.navDelete:
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                alertDialog.setTitle(getString(R.string.deleting_task));
+                alertDialog.setMessage(R.string.deleting_task_dialog_text);
+                alertDialog.setPositiveButton(getString(R.string.yes), (dialog, i) -> {
+                    dialog.dismiss();
+
+                    presenter.delete(RoomDb.getInstance(this).getTaskDao(), taskId);
+                    hasChanges = true;
+
+                    onBackPressed();
+                });
+                alertDialog.setNeutralButton(getString(R.string.cancel), null);
+                alertDialog.create().show();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -90,17 +109,36 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
     }
 
     @Override
+    public void onBackPressed() {
+        intent.putExtra("has_changes", hasChanges);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
     public void setAdapter() {
         timeLineAdapter = new TimeLineAdapter(this, listExecutions);
         recyclerView.setAdapter(timeLineAdapter);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /**
+         * Возврат из RunTaskActivity
+         */
         if (requestCode == RUN_CODE && resultCode == RESULT_OK) {
             seconds = data.getIntExtra("seconds", 0);
 
-            presenter.update(executionDao, listExecutions, taskId, seconds); // data.getIntExtra("status", 0)
-            timeLineAdapter.updateList(executionDao.getExecutionsByTaskId(taskId));
+            if (seconds != 0) {
+                presenter.update(executionDao, listExecutions, taskId, seconds); // data.getIntExtra("status", 0)
+                hasChanges = true;
+            }
         }
+    }
+
+    @Override
+    public void updateAdapter() {
+        listExecutions = executionDao.getExecutionsByTaskId(taskId);
+        timeLineAdapter = new TimeLineAdapter(this, listExecutions);
+        recyclerView.setAdapter(timeLineAdapter);
     }
 }

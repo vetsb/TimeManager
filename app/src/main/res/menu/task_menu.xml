@@ -5,4 +5,9 @@
         android:id="@+id/navRun"
         android:title="@string/run"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/navDelete"
+        android:title=""
+        android:icon="@drawable/delete"
+        app:showAsAction="always"/>
 </menu>

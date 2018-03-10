@@ -14,6 +14,7 @@ import java.util.List;
 
 import ru.dmitriylebyodkin.timemanager.Activities.RunTaskActivity;
 import ru.dmitriylebyodkin.timemanager.Activities.TaskActivity;
+import ru.dmitriylebyodkin.timemanager.Activities.TasksActivity;
 import ru.dmitriylebyodkin.timemanager.App;
 import ru.dmitriylebyodkin.timemanager.R;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Execution;
@@ -80,9 +81,10 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
          */
         holder.container.setOnClickListener(view -> {
             Intent intent = new Intent(context, TaskActivity.class);
+            intent.putExtra("position", position);
             intent.putExtra("id", task.getId());
             intent.putExtra("title", task.getTitle());
-            context.startActivity(intent);
+            ((TasksActivity) context).startActivityForResult(intent, TasksActivity.TASK_CODE);
         });
         holder.tvTitle.setText(task.getTitle());
 
@@ -111,7 +113,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
         int planTime = task.getPlanTime();
 
         if (planTime == 0) {
-            holder.layoutTimeLeft.setVisibility(View.GONE);
+            holder.tvTimeLeft.setText(context.getString(R.string.no_time_limit));
         } else {
             switch (task.getUnit()) {
                 case 0:
@@ -153,13 +155,13 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
         /**
          * Клик на кнопку ПОДРОБНЕЕ
          */
-        holder.tvReadMore.setOnClickListener(view -> {
-            Intent intent = new Intent(context, TaskActivity.class);
-            intent.putExtra("position", position);
-            intent.putExtra("id", task.getId());
-            intent.putExtra("title", task.getTitle());
-            context.startActivity(intent);
-        });
+//        holder.tvReadMore.setOnClickListener(view -> {
+//            Intent intent = new Intent(context, TaskActivity.class);
+//            intent.putExtra("position", position);
+//            intent.putExtra("id", task.getId());
+//            intent.putExtra("title", task.getTitle());
+//            context.startActivity(intent);
+//        });
 
 
         /**

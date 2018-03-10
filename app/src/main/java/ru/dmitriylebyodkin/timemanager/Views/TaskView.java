@@ -11,4 +11,6 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface TaskView extends MvpView {
     void setAdapter();
+
+    void updateAdapter();
 }

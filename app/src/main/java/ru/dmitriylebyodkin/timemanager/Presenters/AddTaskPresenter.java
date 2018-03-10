@@ -1,5 +1,7 @@
 package ru.dmitriylebyodkin.timemanager.Presenters;
 
+import android.util.Log;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
@@ -21,6 +23,6 @@ public class AddTaskPresenter extends MvpPresenter<AddTaskView> {
     public void addTask(RoomDb roomDb, Task task) {
         long taskId = AddTaskModel.insert(roomDb, task);
 
-        getViewState().setTaskId(taskId);
+        getViewState().finishActivity(taskId);
     }
 }

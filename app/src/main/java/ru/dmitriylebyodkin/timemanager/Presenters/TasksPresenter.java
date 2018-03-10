@@ -1,6 +1,7 @@
 package ru.dmitriylebyodkin.timemanager.Presenters;
 
 import android.content.Intent;
+import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
@@ -20,11 +21,9 @@ import ru.dmitriylebyodkin.timemanager.Views.TasksView;
 
 @InjectViewState
 public class TasksPresenter extends MvpPresenter<TasksView> {
-    public TasksPresenter() {
-        getViewState().setAdapter();
-    }
+    private static final String TAG = "myLogs";
 
-    public void setAdapter() {
+    public TasksPresenter() {
         getViewState().setAdapter();
     }
 
@@ -32,6 +31,7 @@ public class TasksPresenter extends MvpPresenter<TasksView> {
         TaskWithExecutions taskWithExecutions = new TaskWithExecutions();
 
         Task task = new Task();
+        task.setId(data.getIntExtra("id", 0));
         task.setTitle(data.getStringExtra("title"));
         task.setPlanTime(data.getIntExtra("plan_time", 0));
         task.setUnit(data.getIntExtra("unit", 0));

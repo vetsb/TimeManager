@@ -9,6 +9,7 @@ import java.util.List;
 import ru.dmitriylebyodkin.timemanager.App;
 import ru.dmitriylebyodkin.timemanager.Models.TaskModel;
 import ru.dmitriylebyodkin.timemanager.Room.Dao.ExecutionDao;
+import ru.dmitriylebyodkin.timemanager.Room.Dao.TaskDao;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Execution;
 import ru.dmitriylebyodkin.timemanager.Views.TaskView;
 
@@ -71,5 +72,11 @@ public class TaskPresenter extends MvpPresenter<TaskView> {
 
             TaskModel.updateExecution(executionDao, newExecution);
         }
+
+        getViewState().updateAdapter();
+    }
+
+    public void delete(TaskDao taskDao, int id) {
+        TaskModel.delete(taskDao, id);
     }
 }

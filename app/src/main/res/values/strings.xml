@@ -28,4 +28,7 @@
     <string name="how_work">Оценка эффективности</string>
     <string name="ready">Готово</string>
     <string name="not_yet_started">Ещё не начиналось</string>
+    <string name="no_time_limit">Нет срока</string>
+    <string name="deleting_task">Удаление занятия</string>
+    <string name="deleting_task_dialog_text">Вы уверены, что хотите удалить занятие?</string>
 </resources>

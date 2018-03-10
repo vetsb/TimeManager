@@ -3,6 +3,7 @@ package ru.dmitriylebyodkin.timemanager.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -48,7 +49,6 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
     private final static String FRAG_TAG_DATE_PICKER = "tag";
     private RoomDb roomDb;
     private MenuItem gMenuItem;
-    private long taskId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,15 +179,6 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
         switch (item.getItemId()) {
             case R.id.navAdd:
                 presenter.addTask(roomDb, getTask());
-
-                Intent intent = new Intent();
-                intent.putExtra("id", taskId);
-                intent.putExtra("title", getTaskTitle());
-                intent.putExtra("plan_time", getTaskPlanTime());
-                intent.putExtra("unit", getTaskUnit());
-
-                setResult(RESULT_OK, intent);
-                finish();
                 break;
         }
 
@@ -195,7 +186,14 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
     }
 
     @Override
-    public void setTaskId(long taskId) {
-        this.taskId = taskId;
+    public void finishActivity(long taskId) {
+        Intent intent = new Intent();
+        intent.putExtra("id", (int) taskId);
+        intent.putExtra("title", getTaskTitle());
+        intent.putExtra("plan_time", getTaskPlanTime());
+        intent.putExtra("unit", getTaskUnit());
+
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
