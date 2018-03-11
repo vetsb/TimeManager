@@ -31,4 +31,5 @@
     <string name="no_time_limit">Нет срока</string>
     <string name="deleting_task">Удаление занятия</string>
     <string name="deleting_task_dialog_text">Вы уверены, что хотите удалить занятие?</string>
+    <string name="save">Сохранить</string>
 </resources>

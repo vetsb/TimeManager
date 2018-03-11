@@ -81,9 +81,13 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
          */
         holder.container.setOnClickListener(view -> {
             Intent intent = new Intent(context, TaskActivity.class);
-            intent.putExtra("position", position);
+//            intent.putExtra("position", position);
             intent.putExtra("id", task.getId());
             intent.putExtra("title", task.getTitle());
+            intent.putExtra("unit", task.getUnit());
+            intent.putExtra("plan_time", task.getPlanTime());
+            intent.putExtra("timestamp_start", task.getTimestampStart());
+            intent.putExtra("timestamp_deadline", task.getTimestampDeadline());
             ((TasksActivity) context).startActivityForResult(intent, TasksActivity.TASK_CODE);
         });
         holder.tvTitle.setText(task.getTitle());

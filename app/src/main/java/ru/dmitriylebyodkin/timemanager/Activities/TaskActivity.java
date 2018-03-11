@@ -36,6 +36,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
 
     private Intent intent;
     private final static int RUN_CODE = 1;
+    private final static int EDIT_TASK_CODE = 2;
     private List<Execution> listExecutions;
     private int taskId;
     private ExecutionDao executionDao;
@@ -81,6 +82,11 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
                 Intent runIntent = new Intent(this, RunTaskActivity.class);
                 runIntent.putExtra("id", intent.getIntExtra("id", 0));
                 startActivityForResult(runIntent, RUN_CODE);
+                break;
+            case R.id.navEdit:
+                Intent editIntent = new Intent(this, EditTaskActivity.class);
+                editIntent.putExtras(intent.getExtras());
+                startActivityForResult(editIntent, EDIT_TASK_CODE);
                 break;
             case R.id.navDelete:
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
@@ -131,6 +137,19 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
             if (seconds != 0) {
                 presenter.update(executionDao, listExecutions, taskId, seconds); // data.getIntExtra("status", 0)
                 hasChanges = true;
+            }
+        }
+
+        if (requestCode == EDIT_TASK_CODE && resultCode == RESULT_OK) {
+            boolean dHasChanges = data.getBooleanExtra("has_changes", false);
+
+            if (dHasChanges) {
+                String title = data.getStringExtra("title");
+
+                if (title != "") {
+                    setTitle(title);
+                    hasChanges = true;
+                }
             }
         }
     }

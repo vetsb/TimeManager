@@ -1,9 +1,9 @@
 package ru.dmitriylebyodkin.timemanager.Activities;
 
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -20,33 +20,32 @@ import java.util.Calendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.dmitriylebyodkin.timemanager.App;
-import ru.dmitriylebyodkin.timemanager.Presenters.AddTaskPresenter;
+import ru.dmitriylebyodkin.timemanager.Presenters.EditTaskPresenter;
 import ru.dmitriylebyodkin.timemanager.R;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Task;
 import ru.dmitriylebyodkin.timemanager.Room.RoomDb;
-import ru.dmitriylebyodkin.timemanager.Views.AddTaskView;
+import ru.dmitriylebyodkin.timemanager.Views.EditTaskView;
 
-public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView {
+public class EditTaskActivity extends MvpAppCompatActivity implements EditTaskView {
 
     private static final String TAG = "myLogs";
     @BindView(R.id.etTitle)
     EditText etTitle;
-    @BindView(R.id.tvDate)
-    TextView tvDate;
     @BindView(R.id.etPlanTime)
     EditText etPlanTime;
     @BindView(R.id.spinnerTimeUnit)
     Spinner spinnerTimeUnit;
+    @BindView(R.id.tvDate)
+    TextView tvDate;
     @BindView(R.id.tvDeadline)
     TextView tvDeadline;
 
     @InjectPresenter
-    AddTaskPresenter presenter;
+    EditTaskPresenter presenter;
 
+    private Intent intent;
     private Task task;
     private final static String FRAG_TAG_DATE_PICKER = "tag";
-    private RoomDb roomDb;
-    private MenuItem gMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +53,52 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
         setContentView(R.layout.activity_add_task);
 
         ButterKnife.bind(this);
-
-        roomDb = RoomDb.getInstance(this);
+        intent = getIntent();
         task = new Task();
+
+        String title = intent.getStringExtra("title");
+        int planTime = intent.getIntExtra("plan_time", 0);
+
+        task.setId(intent.getIntExtra("id", 0));
+
+        if (title != null && title.length() > 0) {
+            etTitle.setText(title);
+            etTitle.setSelection(title.length());
+        }
+
+        if (planTime != 0) {
+            etPlanTime.setText(String.valueOf(planTime));
+        }
 
         ArrayAdapter spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, Task.UNITS);
         spinnerTimeUnit.setAdapter(spinnerAdapter);
-        spinnerTimeUnit.setSelection(2);
+        spinnerTimeUnit.setSelection(intent.getIntExtra("unit", 2));
+
+        int tDayOfMonth, tMonthOfYear;
+        int timestampStart = intent.getIntExtra("timestamp_start", 0);
+        int timestampDeadline = intent.getIntExtra("timestamp_deadline", 0);
+
+        Calendar calendar = Calendar.getInstance(App.getTimeZone());
+
+        if (timestampStart != 0) {
+            calendar.setTimeInMillis(timestampStart);
+
+            tDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+            tMonthOfYear = calendar.get(Calendar.MONTH);
+
+            tvDate.setText(tDayOfMonth + " " + App.getMonthRByNumber(tMonthOfYear));
+        }
+
+        if (timestampDeadline != 0) {
+            calendar.setTimeInMillis(timestampDeadline);
+
+            tDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+            tMonthOfYear = calendar.get(Calendar.MONTH);
+
+            tvDeadline.setText(tDayOfMonth + " " + App.getMonthRByNumber(tMonthOfYear));
+        }
 
         tvDate.setOnClickListener(view -> {
-            Calendar calendar = Calendar.getInstance(App.getTimeZone());
-
             int finalYear, finalMonth, finalDay;
 
             if (task.getTimestampStart() == 0) {
@@ -91,8 +125,6 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
         });
 
         tvDeadline.setOnClickListener(view -> {
-            Calendar calendar = Calendar.getInstance(App.getTimeZone());
-
             int finalYear, finalMonth, finalDay;
 
             if (task.getTimestampDeadline() == 0) {
@@ -143,15 +175,6 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
         }
     }
 
-    public Task getTask() {
-//        Task task = new Task();
-        task.setTitle(getTaskTitle());
-        task.setUnit(getTaskUnit());
-        task.setPlanTime(getTaskPlanTime());
-
-        return task;
-    }
-
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -159,17 +182,27 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
     }
 
     @Override
+    public void onBackPressed() {
+        intent.putExtra("has_changes", false);
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_task_menu, menu);
-        gMenuItem = menu.getItem(0);
+        getMenuInflater().inflate(R.menu.edit_task_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.navAdd:
-                presenter.addTask(roomDb, getTask());
+            case R.id.navSave:
+                task.setTitle(getTaskTitle());
+                task.setUnit(getTaskUnit());
+                task.setPlanTime(getTaskPlanTime());
+
+                presenter.editTask(RoomDb.getInstance(this).getTaskDao(), task);
                 break;
         }
 
@@ -177,13 +210,9 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
     }
 
     @Override
-    public void finishActivity(long taskId) {
-        Intent intent = new Intent();
-        intent.putExtra("id", (int) taskId);
+    public void finishActivity() {
         intent.putExtra("title", getTaskTitle());
-        intent.putExtra("plan_time", getTaskPlanTime());
-        intent.putExtra("unit", getTaskUnit());
-
+        intent.putExtra("has_changes", true);
         setResult(RESULT_OK, intent);
         finish();
     }

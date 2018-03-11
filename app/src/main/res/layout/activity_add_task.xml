@@ -7,17 +7,6 @@
         style="@style/MainLayout"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <!--<EditText-->
-            <!--android:id="@+id/etTitle"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textSize="24sp"-->
-            <!--android:textColor="#000000"-->
-            <!--android:textStyle="bold"-->
-            <!--android:textColorHint="#000000"-->
-            <!--android:hint="@string/title"-->
-            <!--style="@style/EditText"/>-->
-
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.dmitriylebyodkin.timemanager">
 
@@ -20,12 +21,14 @@
         </activity>
         <activity
             android:name=".Activities.AddTaskActivity"
-            android:label="@string/add_task_activity_title"></activity>
+            android:label="@string/add_task_activity_title" />
         <activity
             android:name=".Activities.TaskActivity"
-            android:label="@string/task_activity_title"></activity>
+            android:label="@string/task_activity_title" />
         <activity
             android:name=".Activities.RunTaskActivity"
-            android:label="@string/run_task_activity_title"></activity>
+            android:label="@string/run_task_activity_title" />
+        <activity android:name=".Activities.EditTaskActivity"></activity>
     </application>
+
 </manifest>

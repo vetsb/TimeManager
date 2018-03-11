@@ -6,6 +6,11 @@
         android:title="@string/run"
         app:showAsAction="always"/>
     <item
+        android:id="@+id/navEdit"
+        android:title=""
+        android:icon="@drawable/pencil"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/navDelete"
         android:title=""
         android:icon="@drawable/delete"
