@@ -34,4 +34,6 @@
     <string name="save">Сохранить</string>
     <string name="edit_task_activity_title">Редактирование</string>
     <string name="success_edit">Занятие изменено</string>
+    <string name="delete">Удалить</string>
+    <string name="success_delete">Занятие удалено</string>
 </resources>

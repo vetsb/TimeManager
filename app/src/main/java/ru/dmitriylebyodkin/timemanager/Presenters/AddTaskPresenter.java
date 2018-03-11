@@ -30,4 +30,8 @@ public class AddTaskPresenter extends MvpPresenter<AddTaskView> {
 
         getViewState().finishEdit();
     }
+
+    public void delete(TaskDao taskDao, int id) {
+        TaskModel.delete(taskDao, id);
+    }
 }

@@ -146,6 +146,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
          */
         if (requestCode == EDIT_TASK_CODE && resultCode == RESULT_OK) {
             boolean dHasChanges = data.getBooleanExtra("has_changes", false);
+            boolean isDeleted = data.getBooleanExtra("deleted", false);
 
             if (dHasChanges) {
                 String title = data.getStringExtra("title");
@@ -157,6 +158,13 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
 
                     Toast.makeText(this, getString(R.string.success_edit), Toast.LENGTH_SHORT).show();
                 }
+            }
+
+            if (isDeleted) {
+                intent.putExtra("has_changes", true);
+                intent.putExtra("deleted", true);
+                setResult(RESULT_OK, intent);
+                finish();
             }
         }
     }

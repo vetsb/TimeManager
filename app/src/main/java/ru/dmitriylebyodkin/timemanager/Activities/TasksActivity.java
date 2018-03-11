@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -92,11 +93,16 @@ public class TasksActivity extends MvpAppCompatActivity implements TasksView {
         if (requestCode == TASK_CODE && resultCode == RESULT_OK) {
 //            int position = data.getIntExtra("position", 0);
             boolean hasChanges = data.getBooleanExtra("has_changes", false);
+            boolean isDeleted = data.getBooleanExtra("deleted", false);
 
             if (hasChanges) {
                 listTasks = roomDb.getTaskDao().getTasksWithExecutions();
                 adapter.updateList(listTasks);
                 adapter.notifyDataSetChanged();
+            }
+
+            if (isDeleted) {
+                Toast.makeText(this, getString(R.string.success_delete), Toast.LENGTH_SHORT).show();
             }
         }
     }

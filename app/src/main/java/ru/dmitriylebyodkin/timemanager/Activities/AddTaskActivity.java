@@ -3,9 +3,11 @@ package ru.dmitriylebyodkin.timemanager.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -39,6 +41,8 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
     Spinner spinnerTimeUnit;
     @BindView(R.id.tvDeadline)
     TextView tvDeadline;
+    @BindView(R.id.tvDelete)
+    TextView tvDelete;
 
     @InjectPresenter
     AddTaskPresenter presenter;
@@ -62,11 +66,14 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
         task = new Task();
         Calendar calendar = Calendar.getInstance(App.getTimeZone());
 
+        tvDelete.setVisibility(View.GONE);
+
         /**
-         * Добавление текста в поля дат (изменение занятия)
+         * Добавление текста в поля дат (изменение занятия) и показ кнопки удаления
          */
         if (intent.getExtras() != null) {
             isEditable = true;
+            tvDelete.setVisibility(View.VISIBLE);
         }
 
         if (isEditable) {
@@ -83,7 +90,6 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
         ArrayAdapter spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, Task.UNITS);
         spinnerTimeUnit.setAdapter(spinnerAdapter);
         spinnerTimeUnit.setSelection(2);
-
 
         tvDate.setOnClickListener(view -> {
             int finalYear, finalMonth, finalDay;
@@ -135,6 +141,23 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
                     .setDoneText(getString(R.string.next))
                     .setCancelText(getString(R.string.cancel));
             cdp.show(getSupportFragmentManager(), FRAG_TAG_DATE_PICKER);
+        });
+
+        tvDelete.setOnClickListener(view -> {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setTitle(getString(R.string.deleting_task));
+            alertDialog.setMessage(R.string.deleting_task_dialog_text);
+            alertDialog.setPositiveButton(getString(R.string.yes), (dialog, i) -> {
+                dialog.dismiss();
+
+                presenter.delete(RoomDb.getInstance(this).getTaskDao(), intent.getIntExtra("id", 0));
+                intent.putExtra("deleted", true);
+
+                setResult(RESULT_OK, intent);
+                finish();
+            });
+            alertDialog.setNeutralButton(getString(R.string.cancel), null);
+            alertDialog.create().show();
         });
 
         ActionBar actionBar = getSupportActionBar();
