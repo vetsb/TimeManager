@@ -47,6 +47,8 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
     private final static String FRAG_TAG_DATE_PICKER = "tag";
     private RoomDb roomDb;
     private MenuItem gMenuItem;
+    private Intent intent;
+    private boolean isEditable = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +56,36 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
         setContentView(R.layout.activity_add_task);
 
         ButterKnife.bind(this);
+        intent = getIntent();
 
         roomDb = RoomDb.getInstance(this);
         task = new Task();
+        Calendar calendar = Calendar.getInstance(App.getTimeZone());
+
+        /**
+         * Добавление текста в поля дат (изменение занятия)
+         */
+        if (intent.getExtras() != null) {
+            isEditable = true;
+        }
+
+        if (isEditable) {
+            task.setTimestampStart(intent.getIntExtra("timestamp_start", 0));
+            task.setTimestampDeadline(intent.getIntExtra("timestamp_deadline", 0));
+
+            calendar.setTimeInMillis(task.getTimestampStart()*1000L);
+            tvDate.setText(calendar.get(Calendar.DAY_OF_MONTH) + " " + App.getMonthRByNumber(calendar.get(Calendar.MONTH)));
+
+            calendar.setTimeInMillis(task.getTimestampDeadline()*1000L);
+            tvDeadline.setText(calendar.get(Calendar.DAY_OF_MONTH) + " " + App.getMonthRByNumber(calendar.get(Calendar.MONTH)));
+        }
 
         ArrayAdapter spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, Task.UNITS);
         spinnerTimeUnit.setAdapter(spinnerAdapter);
         spinnerTimeUnit.setSelection(2);
 
-        tvDate.setOnClickListener(view -> {
-            Calendar calendar = Calendar.getInstance(App.getTimeZone());
 
+        tvDate.setOnClickListener(view -> {
             int finalYear, finalMonth, finalDay;
 
             if (task.getTimestampStart() == 0) {
@@ -91,8 +112,6 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
         });
 
         tvDeadline.setOnClickListener(view -> {
-            Calendar calendar = Calendar.getInstance(App.getTimeZone());
-
             int finalYear, finalMonth, finalDay;
 
             if (task.getTimestampDeadline() == 0) {
@@ -122,6 +141,29 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
 
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        /**
+         * Если изменяется занятие, то записать в поля значения, изменить название экрана и поменять текст пункта меню в тулбаре
+         */
+        if (isEditable) {
+            String title = intent.getStringExtra("title");
+            int planTime = intent.getIntExtra("plan_time", 0);
+
+            task.setId(intent.getIntExtra("id", 0));
+
+            if (title != null && title.length() > 0) {
+                etTitle.setText(title);
+                etTitle.setSelection(title.length());
+            }
+
+            if (planTime != 0) {
+                etPlanTime.setText(String.valueOf(planTime));
+            }
+
+            spinnerTimeUnit.setSelection(intent.getIntExtra("unit", 2));
+
+            setTitle(getString(R.string.edit_task_activity_title));
         }
     }
 
@@ -162,6 +204,10 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.add_task_menu, menu);
         gMenuItem = menu.getItem(0);
+
+        if (isEditable) {
+            gMenuItem.setTitle(getString(R.string.save));
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -169,7 +215,11 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.navAdd:
-                presenter.addTask(roomDb, getTask());
+                if (isEditable) {
+                    presenter.updateTask(roomDb.getTaskDao(), getTask());
+                } else {
+                    presenter.addTask(roomDb, getTask());
+                }
                 break;
         }
 
@@ -177,7 +227,20 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
     }
 
     @Override
-    public void finishActivity(long taskId) {
+    public void finishEdit() {
+        intent.putExtra("title", getTaskTitle());
+        intent.putExtra("plan_time", task.getPlanTime());
+        intent.putExtra("unit", task.getUnit());
+        intent.putExtra("timestamp_start", task.getTimestampStart());
+        intent.putExtra("timestamp_deadline", task.getTimestampDeadline());
+        intent.putExtra("has_changes", true);
+
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
+    public void finishAdd(long taskId) {
         Intent intent = new Intent();
         intent.putExtra("id", (int) taskId);
         intent.putExtra("title", getTaskTitle());

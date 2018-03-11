@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -84,7 +85,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
                 startActivityForResult(runIntent, RUN_CODE);
                 break;
             case R.id.navEdit:
-                Intent editIntent = new Intent(this, EditTaskActivity.class);
+                Intent editIntent = new Intent(this, AddTaskActivity.class);
                 editIntent.putExtras(intent.getExtras());
                 startActivityForResult(editIntent, EDIT_TASK_CODE);
                 break;
@@ -140,15 +141,21 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
             }
         }
 
+        /**
+         * Возврат из AddTaskActivity
+         */
         if (requestCode == EDIT_TASK_CODE && resultCode == RESULT_OK) {
             boolean dHasChanges = data.getBooleanExtra("has_changes", false);
 
             if (dHasChanges) {
                 String title = data.getStringExtra("title");
+                intent.putExtras(data.getExtras());
 
                 if (title != "") {
                     setTitle(title);
                     hasChanges = true;
+
+                    Toast.makeText(this, getString(R.string.success_edit), Toast.LENGTH_SHORT).show();
                 }
             }
         }

@@ -28,7 +28,6 @@
         <activity
             android:name=".Activities.RunTaskActivity"
             android:label="@string/run_task_activity_title" />
-        <activity android:name=".Activities.EditTaskActivity"></activity>
     </application>
 
 </manifest>

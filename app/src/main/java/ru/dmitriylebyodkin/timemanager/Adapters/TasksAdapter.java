@@ -3,6 +3,7 @@ package ru.dmitriylebyodkin.timemanager.Adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,6 +90,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
             intent.putExtra("timestamp_start", task.getTimestampStart());
             intent.putExtra("timestamp_deadline", task.getTimestampDeadline());
             ((TasksActivity) context).startActivityForResult(intent, TasksActivity.TASK_CODE);
+
         });
         holder.tvTitle.setText(task.getTitle());
 

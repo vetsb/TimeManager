@@ -11,5 +11,7 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface AddTaskView extends MvpView {
 
-    void finishActivity(long taskId);
+    void finishEdit();
+
+    void finishAdd(long taskId);
 }
