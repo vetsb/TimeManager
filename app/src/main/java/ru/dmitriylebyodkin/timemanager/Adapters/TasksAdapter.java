@@ -2,17 +2,23 @@ package ru.dmitriylebyodkin.timemanager.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.chauthai.swipereveallayout.SwipeRevealLayout;
+import com.chauthai.swipereveallayout.ViewBinderHelper;
 
 import java.util.Calendar;
 import java.util.List;
 
+import ru.dmitriylebyodkin.timemanager.Activities.AddTaskActivity;
 import ru.dmitriylebyodkin.timemanager.Activities.RunTaskActivity;
 import ru.dmitriylebyodkin.timemanager.Activities.TaskActivity;
 import ru.dmitriylebyodkin.timemanager.Activities.TasksActivity;
@@ -31,6 +37,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
     private static final String TAG = "myLogs";
     private Context context;
     private List<TaskWithExecutions> mData;
+    private final ViewBinderHelper viewBinderHelper = new ViewBinderHelper();
 
     public TasksAdapter(Context context, List<TaskWithExecutions> data) {
         this.context = context;
@@ -41,6 +48,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
         private LinearLayout container, layoutTimeLeft;
         private TextView tvTitle, tvRunningTime, tvTimeLeft, tvRun, tvReadMore;
         private View viewLine;
+        private SwipeRevealLayout swipeRevealLayout;
+        private Button btnEdit, btnDelete;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -53,12 +62,19 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
             tvRun = itemView.findViewById(R.id.tvRun);
             tvReadMore = itemView.findViewById(R.id.tvReadMore);
             viewLine = itemView.findViewById(R.id.viewLine);
+            swipeRevealLayout = itemView.findViewById(R.id.swipeRevealLayout);
+            btnEdit = itemView.findViewById(R.id.btnEdit);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
 
     public void updateList(List<TaskWithExecutions> data) {
         this.mData = data;
         this.notifyDataSetChanged();
+    }
+
+    public void setList(List<TaskWithExecutions> data) {
+        this.mData = data;
     }
 
     @Override
@@ -72,10 +88,35 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
         );
     }
 
+    public void saveStates(Bundle outState) {
+        viewBinderHelper.saveStates(outState);
+    }
+
+    public void restoreStates(Bundle inState) {
+        viewBinderHelper.restoreStates(inState);
+    }
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Task task = mData.get(position).getTask();
         List<Execution> listExecutions = mData.get(position).getExecutions();
+
+        viewBinderHelper.bind(holder.swipeRevealLayout, String.valueOf(task.getId()));
+
+        holder.btnDelete.setOnClickListener(view -> {
+            ((TasksActivity) context).deleteTask(position, task.getId());
+        });
+
+        holder.btnEdit.setOnClickListener(view -> {
+            Intent intent = new Intent(context, AddTaskActivity.class);
+            intent.putExtra("id", task.getId());
+            intent.putExtra("title", task.getTitle());
+            intent.putExtra("unit", task.getUnit());
+            intent.putExtra("plan_time", task.getPlanTime());
+            intent.putExtra("timestamp_start", task.getTimestampStart());
+            intent.putExtra("timestamp_deadline", task.getTimestampDeadline());
+            ((TasksActivity) context).startActivityForResult(intent, TasksActivity.TASK_CODE);
+        });
 
         /**
          * Клик на весь элемент

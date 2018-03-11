@@ -1,99 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/container"
-    style="@style/AutoHeight"
-    android:orientation="vertical"
-    android:paddingTop="24dp"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
+<com.chauthai.swipereveallayout.SwipeRevealLayout
+    android:id="@+id/swipeRevealLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:mode="same_level"
+    app:dragEdge="right"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        android:layout_marginBottom="15dp"/>
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginRight="45dp"
-            android:layout_marginEnd="45dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/running_hours"
-                android:layout_marginBottom="7dp"
-                android:textColor="#AAAAAA"
-                android:textSize="16sp" />
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvRunningTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#585858"
-                android:textSize="18sp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/layoutTimeLeft">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/hours_left"
-                android:layout_marginBottom="7dp"
-                android:textColor="#AAAAAA"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:id="@+id/tvTimeLeft"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#585858"
-                android:textSize="18sp"/>
-        </LinearLayout>
+        <Button
+            android:id="@+id/btnEdit"
+            style="@style/BtnSwipeMenu"
+            android:background="@drawable/edit_btn"/>
+        <Button
+            android:id="@+id/btnDelete"
+            style="@style/BtnSwipeMenu"
+            android:background="@drawable/delete_btn"/>
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/container"
+        style="@style/AutoHeight"
+        android:orientation="vertical"
+        android:paddingTop="24dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp">
 
         <TextView
-            android:id="@+id/tvRun"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/run_now"
-            android:textColor="#AAAAAA"
-            android:textSize="14sp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginBottom="15dp"/>
 
-        <TextView
-            android:id="@+id/tvReadMore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/read_more"
-            android:textColor="#AAAAAA"
-            android:textSize="14sp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
-    </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginRight="45dp"
+                android:layout_marginEnd="45dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/running_hours"
+                    android:layout_marginBottom="7dp"
+                    android:textColor="#AAAAAA"
+                    android:textSize="16sp" />
 
-    <View
-        android:id="@+id/viewLine"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#12000000"/>
-</LinearLayout>
+                <TextView
+                    android:id="@+id/tvRunningTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#585858"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/layoutTimeLeft">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hours_left"
+                    android:layout_marginBottom="7dp"
+                    android:textColor="#AAAAAA"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/tvTimeLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#585858"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvRun"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/run_now"
+                android:textColor="#AAAAAA"
+                android:textSize="14sp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:id="@+id/tvReadMore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/read_more"
+                android:textColor="#AAAAAA"
+                android:textSize="14sp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/viewLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#12000000"/>
+    </LinearLayout>
+
+
+</com.chauthai.swipereveallayout.SwipeRevealLayout>

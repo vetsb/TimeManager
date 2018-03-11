@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -28,6 +27,7 @@ import ru.dmitriylebyodkin.timemanager.Views.TasksView;
 public class TasksActivity extends MvpAppCompatActivity implements TasksView {
 
     private static final String TAG = "myLogs";
+
     @BindView(R.id.floatButton)
     FloatingActionButton floatingActionButton;
     @BindView(R.id.listTasks)
@@ -38,6 +38,8 @@ public class TasksActivity extends MvpAppCompatActivity implements TasksView {
 
     public static final int ADD_TASK_CODE = 1;
     public static final int TASK_CODE = 2;
+    public static final int EDIT_TASK_CODE = 3;
+
     private TasksAdapter adapter;
     private RoomDb roomDb;
     private List<TaskWithExecutions> listTasks = new ArrayList<>();
@@ -85,6 +87,14 @@ public class TasksActivity extends MvpAppCompatActivity implements TasksView {
         adapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void deleteTask(int position, int id) {
+        presenter.deleteTask(roomDb.getTaskDao(), id);
+        listTasks.remove(position);
+        adapter.setList(listTasks);
+        adapter.notifyItemRemoved(position);
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ADD_TASK_CODE && resultCode == RESULT_OK) {
             presenter.addTaskToList(data);
@@ -117,10 +127,12 @@ public class TasksActivity extends MvpAppCompatActivity implements TasksView {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.navDeleteAll:
-                presenter.clearList(roomDb);
+                presenter.clearList(roomDb.getTaskDao());
                 break;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

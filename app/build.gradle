@@ -58,4 +58,6 @@ dependencies {
     compile 'com.code-troopers.betterpickers:library:3.1.0'
 
     compile 'com.github.vipulasri:timelineview:1.0.6'
+
+    compile 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
 }

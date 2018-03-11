@@ -17,4 +17,6 @@ public interface TasksView extends MvpView {
     void addTaskToList(TaskWithExecutions taskWithExecutions);
 
     void clearList();
+
+    void deleteTask(int position, int id);
 }

@@ -9,6 +9,7 @@ import com.arellomobile.mvp.MvpPresenter;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.dmitriylebyodkin.timemanager.Room.Dao.TaskDao;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Execution;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Task;
 import ru.dmitriylebyodkin.timemanager.Room.Data.TaskWithExecutions;
@@ -48,8 +49,12 @@ public class TasksPresenter extends MvpPresenter<TasksView> {
         getViewState().addTaskToList(taskWithExecutions);
     }
 
-    public void clearList(RoomDb roomDb) {
-        roomDb.getTaskDao().deleteAll();
+    public void clearList(TaskDao taskDao) {
+        taskDao.deleteAll();
         getViewState().clearList();
+    }
+
+    public void deleteTask(TaskDao taskDao, int id) {
+        taskDao.deleteById(id);
     }
 }
