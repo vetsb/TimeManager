@@ -131,7 +131,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
                 case 2:
                     calendar.setTimeInMillis((planTime*60*60-time)*1000L);
 
-                    int calendarHours = calendar.get(Calendar.HOUR);
+                    int calendarHours = (planTime*60*60-time)/60/60;
                     int calendarMinutes = calendar.get(Calendar.MINUTE);
 
                     if (calendarHours == 0) {
