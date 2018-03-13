@@ -3,6 +3,7 @@ package ru.dmitriylebyodkin.timemanager.Models;
 
 import ru.dmitriylebyodkin.timemanager.Room.Dao.ExecutionDao;
 import ru.dmitriylebyodkin.timemanager.Room.Dao.TaskDao;
+import ru.dmitriylebyodkin.timemanager.Room.Data.ExItem;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Execution;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Task;
 import ru.dmitriylebyodkin.timemanager.Room.RoomDb;
@@ -24,15 +25,14 @@ public class TaskModel {
 
         Execution execution = new Execution();
         execution.setTaskId((int) taskId);
+        long executionId = roomDb.getExecutionDao().insert(execution)[0];
 
-        roomDb.getExecutionDao().insert(execution);
+        ExItem exItem = new ExItem();
+        exItem.setExecutionId((int) executionId);
+
+        roomDb.getExItemDao().insert(exItem);
 
         return taskId;
-
-//        ExItem exItem = new ExItem();
-//        exItem.setExecutionId((int) executionId);
-//
-//        roomDb.getExItemDao().insert(exItem);
     }
 
     public static void update(TaskDao taskDao, Task task) {

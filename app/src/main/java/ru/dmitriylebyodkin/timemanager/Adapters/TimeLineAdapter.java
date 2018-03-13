@@ -2,6 +2,7 @@ package ru.dmitriylebyodkin.timemanager.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -14,7 +15,10 @@ import java.util.List;
 
 import ru.dmitriylebyodkin.timemanager.App;
 import ru.dmitriylebyodkin.timemanager.R;
+import ru.dmitriylebyodkin.timemanager.Room.Data.ExItem;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Execution;
+import ru.dmitriylebyodkin.timemanager.Room.Data.ExecutionWithItems;
+import ru.dmitriylebyodkin.timemanager.Room.RoomDb;
 
 
 /**
@@ -24,10 +28,14 @@ import ru.dmitriylebyodkin.timemanager.Room.Data.Execution;
 public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHolder> {
     private static final String TAG = "myLogs";
     private Context context;
-    private List<Execution> mData;
+    private List<ExecutionWithItems> mData;
 
-    public TimeLineAdapter(Context context, List<Execution> data) {
+    public TimeLineAdapter(Context context, List<ExecutionWithItems> data) {
         this.context = context;
+        this.mData = data;
+    }
+
+    public void setList(List<ExecutionWithItems> data) {
         this.mData = data;
     }
 
@@ -49,7 +57,7 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
         }
     }
 
-    public void updateList(List<Execution> data) {
+    public void updateList(List<ExecutionWithItems> data) {
         this.mData = data;
         this.notifyDataSetChanged();
     }
@@ -76,18 +84,13 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Execution execution = mData.get(position);
-//        List<ExItem> listExItems = mData.get(position).getItems();
-//        Task task = RoomDb.getInstance(context).getTaskDao().getTaskById(execution.getTaskId());
+        Execution execution = mData.get(position).getExecution();
+        List<ExItem> exItemList = mData.get(position).getItems();
 
         Calendar calendar = Calendar.getInstance(App.getTimeZone());
         calendar.setTimeInMillis(execution.getCreatedAt()*1000L);
 
         holder.tvDate.setText(calendar.get(Calendar.DAY_OF_MONTH) + " " + App.getMonthRByNumber(calendar.get(Calendar.MONTH)));
-
-        if (execution.getTime() == 0) {
-            holder.layoutTime.setVisibility(View.GONE);
-        }
 
         if (position == 0) {
             holder.tvDate.setText(holder.tvDate.getText() + ".");
@@ -96,23 +99,14 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
 
         int time = 0;
 
-//        for (ExItem item: listExItems) {
-//            time += item.getSeconds();
-//            sumStatuses += item.getStatus();
-//        }
-//
-//        int midStatus;
-//
-//        if (listExItems == null) {
-//            midStatus = 0;
-//        } else {
-//            midStatus = sumStatuses / listExItems.size();
-//        }
+        for (ExItem item: exItemList) {
+            time += item.getSeconds();
+        }
 
-//        Calendar calendarTime = Calendar.getInstance(App.getTimeZone());
-//        calendarTime.setTimeInMillis(time*1000L);
-
-        holder.tvTime.setText(App.formatSeconds(execution.getTime()));
-//        holder.tvStatus.setText(Execution.STATUSES[0]);
+        if (time == 0) {
+            holder.tvTime.setText("Ещё не начиналось");
+        } else {
+            holder.tvTime.setText(App.formatSeconds(time));
+        }
     }
 }

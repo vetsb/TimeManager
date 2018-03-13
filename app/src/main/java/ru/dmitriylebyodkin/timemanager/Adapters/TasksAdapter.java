@@ -142,7 +142,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
         int time = 0;
 
         for (Execution execution: listExecutions) {
-            time += execution.getTime();
+//            time += execution.getTime();
         }
 
         if (time == 0) {

@@ -9,29 +9,36 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center">
-        <TextView
-            android:id="@+id/tvTimerMinutes"
-            android:layout_width="wrap_content"
+
+        <Chronometer
+            android:id="@+id/chronometer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textSize="80sp"
-            android:textColor="#000000"
-            android:text="00"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="80sp"
-            android:textColor="#000000"
-            android:text=":"/>
-        <TextView
-            android:id="@+id/tvTimerSeconds"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="80sp"
-            android:textColor="#000000"
-            android:text="00"/>
+            android:textColor="#000000"/>
+
+        <!--<TextView-->
+            <!--android:id="@+id/tvTimerMinutes"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="80sp"-->
+            <!--android:textColor="#000000"-->
+            <!--android:text="00"/>-->
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="80sp"-->
+            <!--android:textColor="#000000"-->
+            <!--android:text=":"/>-->
+        <!--<TextView-->
+            <!--android:id="@+id/tvTimerSeconds"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="80sp"-->
+            <!--android:textColor="#000000"-->
+            <!--android:text="00"/>-->
     </LinearLayout>
-
-
 
     <RelativeLayout
         android:layout_width="match_parent"

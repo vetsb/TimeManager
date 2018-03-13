@@ -36,4 +36,8 @@
     <string name="success_edit">Занятие изменено</string>
     <string name="delete">Удалить</string>
     <string name="success_delete">Занятие удалено</string>
+    <string name="timer_stop_button">Stop</string>
+    <string name="timer_start_button">Start</string>
+
+    <string name="reset">Reset</string>
 </resources>

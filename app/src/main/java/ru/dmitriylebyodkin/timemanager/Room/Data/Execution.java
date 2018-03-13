@@ -21,8 +21,9 @@ public class Execution {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private int taskId;
-    private int time;
+//    private int time;
 //    private int status;
+    private boolean isStart = false;
     private int createdAt = (int) (System.currentTimeMillis()/1000L);
 
     public int getId() {
@@ -41,12 +42,20 @@ public class Execution {
         this.taskId = taskId;
     }
 
-    public int getTime() {
-        return time;
+//    public int getTime() {
+//        return time;
+//    }
+//
+//    public void setTime(int time) {
+//        this.time = time;
+//    }
+
+    public boolean isStart() {
+        return isStart;
     }
 
-    public void setTime(int time) {
-        this.time = time;
+    public void setStart(boolean start) {
+        isStart = start;
     }
 
     public int getCreatedAt() {

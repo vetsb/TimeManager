@@ -3,10 +3,8 @@ package ru.dmitriylebyodkin.timemanager.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -22,7 +20,8 @@ import ru.dmitriylebyodkin.timemanager.Adapters.TimeLineAdapter;
 import ru.dmitriylebyodkin.timemanager.Presenters.TaskPresenter;
 import ru.dmitriylebyodkin.timemanager.R;
 import ru.dmitriylebyodkin.timemanager.Room.Dao.ExecutionDao;
-import ru.dmitriylebyodkin.timemanager.Room.Data.Execution;
+import ru.dmitriylebyodkin.timemanager.Room.Data.ExItem;
+import ru.dmitriylebyodkin.timemanager.Room.Data.ExecutionWithItems;
 import ru.dmitriylebyodkin.timemanager.Room.RoomDb;
 import ru.dmitriylebyodkin.timemanager.Views.TaskView;
 
@@ -38,11 +37,10 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
     private Intent intent;
     private final static int RUN_CODE = 1;
     private final static int EDIT_TASK_CODE = 2;
-    private List<Execution> listExecutions;
+    private List<ExecutionWithItems> listExecutions;
     private int taskId;
     private ExecutionDao executionDao;
     private TimeLineAdapter timeLineAdapter;
-    private int seconds;
     private boolean hasChanges = false;
 
     @Override
@@ -67,7 +65,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
         executionDao = RoomDb.getInstance(this).getExecutionDao();
 
         taskId = intent.getIntExtra("id", 0);
-        listExecutions = executionDao.getExecutionsByTaskId(taskId);
+        listExecutions = executionDao.getWithItemsById(taskId);
     }
 
     @Override
@@ -88,21 +86,26 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
                 Intent editIntent = new Intent(this, AddTaskActivity.class);
                 editIntent.putExtras(intent.getExtras());
                 startActivityForResult(editIntent, EDIT_TASK_CODE);
+
+                RoomDb.getInstance(this).getExItemDao().updateStart();
+
+//                startActivity(new Intent(this, MainActivity.class));
                 break;
             case R.id.navDelete:
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                alertDialog.setTitle(getString(R.string.deleting_task));
-                alertDialog.setMessage(R.string.deleting_task_dialog_text);
-                alertDialog.setPositiveButton(getString(R.string.yes), (dialog, i) -> {
-                    dialog.dismiss();
-
-                    presenter.delete(RoomDb.getInstance(this).getTaskDao(), taskId);
-                    hasChanges = true;
-
-                    onBackPressed();
-                });
-                alertDialog.setNeutralButton(getString(R.string.cancel), null);
-                alertDialog.create().show();
+                RoomDb.getInstance(this).getExItemDao().updateStart2();
+//                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+//                alertDialog.setTitle(getString(R.string.deleting_task));
+//                alertDialog.setMessage(R.string.deleting_task_dialog_text);
+//                alertDialog.setPositiveButton(getString(R.string.yes), (dialog, i) -> {
+//                    dialog.dismiss();
+//
+//                    presenter.delete(RoomDb.getInstance(this).getTaskDao(), taskId);
+//                    hasChanges = true;
+//
+//                    onBackPressed();
+//                });
+//                alertDialog.setNeutralButton(getString(R.string.cancel), null);
+//                alertDialog.create().show();
                 break;
         }
 
@@ -133,12 +136,31 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
          * Возврат из RunTaskActivity
          */
         if (requestCode == RUN_CODE && resultCode == RESULT_OK) {
-            seconds = data.getIntExtra("seconds", 0);
+//            seconds = (int) data.getLongExtra("seconds", 0);
+//            int position = data.getIntExtra("position", 0);
+//            boolean created = data.getBooleanExtra("created", false);
+//
+//            if (seconds != 0) {
+//                if (created) {
+//                    listExecutions = executionDao.getExecutionsByTaskId(taskId);
+//                    timeLineAdapter.setList(listExecutions);
+//                    timeLineAdapter.notifyDataSetChanged();
+//                } else {
+////                    listExecutions.get(position).setTime(seconds);
+//                    timeLineAdapter.setList(listExecutions);
+//                    timeLineAdapter.notifyItemChanged(position);
+//                }
+////                presenter.update(executionDao, listExecutions, taskId, seconds); // data.getIntExtra("status", 0)
+//                hasChanges = true;
+//            }
 
-            if (seconds != 0) {
-                presenter.update(executionDao, listExecutions, taskId, seconds); // data.getIntExtra("status", 0)
-                hasChanges = true;
-            }
+//            hasChanges = true;
+//            listExecutions = executionDao.getExecutionsByTaskId(taskId);
+
+            listExecutions = executionDao.getWithItemsById(taskId);
+            timeLineAdapter.setList(listExecutions);
+            timeLineAdapter.notifyDataSetChanged();
+
         }
 
         /**
@@ -152,7 +174,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
                 String title = data.getStringExtra("title");
                 intent.putExtras(data.getExtras());
 
-                if (title != "") {
+                if (title.equals("")) {
                     setTitle(title);
                     hasChanges = true;
 
@@ -171,7 +193,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
 
     @Override
     public void updateAdapter() {
-        listExecutions = executionDao.getExecutionsByTaskId(taskId);
+        listExecutions = executionDao.getWithItemsById(taskId);
         timeLineAdapter = new TimeLineAdapter(this, listExecutions);
         recyclerView.setAdapter(timeLineAdapter);
     }

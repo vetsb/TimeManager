@@ -10,19 +10,15 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
  * Created by dmitr on 10.03.2018.
  */
 
-@Entity(foreignKeys = @ForeignKey(entity = Task.class, parentColumns = "id", childColumns = "executionId", onDelete = CASCADE))
+@Entity(foreignKeys = @ForeignKey(entity = Execution.class, parentColumns = "id", childColumns = "executionId", onDelete = CASCADE))
 public class ExItem {
-    public static final String[] STATUSES = new String[] {
-            "Непродуктивно",
-            "Продуктивно",
-            "Очень продуктивно"
-    };
-
     @PrimaryKey(autoGenerate = true)
     private int id;
     private int executionId;
     private int seconds;
-    private int status;
+    private boolean isStart = false;
+    private boolean isPause = false;
+    private boolean isVisible = false;
     private int createdAt = (int) (System.currentTimeMillis()/1000L);
 
     public int getId() {
@@ -49,12 +45,28 @@ public class ExItem {
         this.seconds = seconds;
     }
 
-    public int getStatus() {
-        return status;
+    public boolean isStart() {
+        return isStart;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setStart(boolean start) {
+        isStart = start;
+    }
+
+    public boolean isPause() {
+        return isPause;
+    }
+
+    public void setPause(boolean pause) {
+        isPause = pause;
+    }
+
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    public void setVisible(boolean visible) {
+        isVisible = visible;
     }
 
     public int getCreatedAt() {

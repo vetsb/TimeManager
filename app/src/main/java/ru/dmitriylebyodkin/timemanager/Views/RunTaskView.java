@@ -10,4 +10,7 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface RunTaskView extends MvpView {
+    void startStopwatch();
+
+    void stopStopwatch(boolean changeText, boolean pause);
 }

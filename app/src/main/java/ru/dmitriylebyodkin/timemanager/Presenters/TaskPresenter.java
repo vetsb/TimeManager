@@ -62,12 +62,12 @@ public class TaskPresenter extends MvpPresenter<TaskView> {
         if (newExecution == null) {
             newExecution = new Execution();
             newExecution.setTaskId(taskId);
-            newExecution.setTime(seconds);
+//            newExecution.setTime(seconds);
 //            newExecution.setStatus(status);
 
             TaskModel.insertExecution(executionDao, newExecution);
         } else {
-            newExecution.setTime(newExecution.getTime() + seconds);
+//            newExecution.setTime(newExecution.getTime() + seconds);
 //            newExecution.setStatus(status);
 
             TaskModel.updateExecution(executionDao, newExecution);
