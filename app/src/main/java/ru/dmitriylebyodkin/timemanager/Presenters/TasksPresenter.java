@@ -57,4 +57,8 @@ public class TasksPresenter extends MvpPresenter<TasksView> {
     public void deleteTask(TaskDao taskDao, int id) {
         taskDao.deleteById(id);
     }
+
+    public void checkAndHiddenList() {
+        getViewState().checkAndHiddenList();
+    }
 }

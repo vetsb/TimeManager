@@ -12,17 +12,9 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = @ForeignKey(entity = Task.class, parentColumns = "id", childColumns = "taskId", onDelete = CASCADE))
 public class Execution {
-    public static final String[] STATUSES = new String[] {
-            "Непродуктивно",
-            "Продуктивно",
-            "Очень продуктивно"
-    };
-
     @PrimaryKey(autoGenerate = true)
     private int id;
     private int taskId;
-//    private int time;
-//    private int status;
     private boolean isStart = false;
     private int createdAt = (int) (System.currentTimeMillis()/1000L);
 
@@ -41,14 +33,6 @@ public class Execution {
     public void setTaskId(int taskId) {
         this.taskId = taskId;
     }
-
-//    public int getTime() {
-//        return time;
-//    }
-//
-//    public void setTime(int time) {
-//        this.time = time;
-//    }
 
     public boolean isStart() {
         return isStart;

@@ -7,6 +7,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
@@ -28,17 +31,18 @@ public class TasksActivity extends MvpAppCompatActivity implements TasksView {
 
     private static final String TAG = "myLogs";
 
-    @BindView(R.id.floatButton)
-    FloatingActionButton floatingActionButton;
     @BindView(R.id.listTasks)
     RecyclerView recyclerView;
+    @BindView(R.id.btnCreate)
+    Button btnCreate;
+    @BindView(R.id.layoutAdd)
+    LinearLayout layoutAdd;
 
     @InjectPresenter
     TasksPresenter presenter;
 
     public static final int ADD_TASK_CODE = 1;
     public static final int TASK_CODE = 2;
-    public static final int EDIT_TASK_CODE = 3;
 
     private TasksAdapter adapter;
     private RoomDb roomDb;
@@ -51,16 +55,15 @@ public class TasksActivity extends MvpAppCompatActivity implements TasksView {
 
         ButterKnife.bind(this);
 
-        floatingActionButton.setOnClickListener(view -> startActivityForResult(
-                new Intent(this, AddTaskActivity.class),
-                ADD_TASK_CODE
-        ));
+        btnCreate.setOnClickListener(view -> startAddActivity());
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
         roomDb = RoomDb.getInstance(this);
         listTasks = roomDb.getTaskDao().getTasksWithExecutions();
+
+        presenter.checkAndHiddenList();
     }
 
     @Override
@@ -71,28 +74,32 @@ public class TasksActivity extends MvpAppCompatActivity implements TasksView {
 
     @Override
     public void addTaskToList(TaskWithExecutions taskWithExecutions) {
-        if (listTasks == null) {
-            listTasks.add(taskWithExecutions);
-        } else {
-            listTasks.add(0, taskWithExecutions);
-        }
-        adapter.updateList(listTasks);
-        adapter.notifyDataSetChanged();
+        adapter.add(taskWithExecutions);
+        presenter.checkAndHiddenList();
     }
 
     @Override
     public void clearList() {
-        listTasks = new ArrayList<>();
-        adapter.updateList(null);
-        adapter.notifyDataSetChanged();
+        adapter.clear();
+        presenter.checkAndHiddenList();
     }
 
     @Override
     public void deleteTask(int position, int id) {
         presenter.deleteTask(roomDb.getTaskDao(), id);
-        listTasks.remove(position);
-        adapter.setList(listTasks);
-        adapter.notifyItemRemoved(position);
+        adapter.remove(position);
+        presenter.checkAndHiddenList();
+    }
+
+    @Override
+    public void checkAndHiddenList() {
+        if (adapter.getItemCount() == 0) {
+            layoutAdd.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        } else {
+            layoutAdd.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -101,14 +108,12 @@ public class TasksActivity extends MvpAppCompatActivity implements TasksView {
         }
 
         if (requestCode == TASK_CODE && resultCode == RESULT_OK) {
-//            int position = data.getIntExtra("position", 0);
             boolean hasChanges = data.getBooleanExtra("has_changes", false);
             boolean isDeleted = data.getBooleanExtra("deleted", false);
 
             if (hasChanges) {
                 listTasks = roomDb.getTaskDao().getTasksWithExecutions();
-                adapter.updateList(listTasks);
-                adapter.notifyDataSetChanged();
+                adapter.setList(listTasks);
             }
 
             if (isDeleted) {
@@ -126,12 +131,20 @@ public class TasksActivity extends MvpAppCompatActivity implements TasksView {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.navAdd:
+                startAddActivity();
+                break;
             case R.id.navDeleteAll:
                 presenter.clearList(roomDb.getTaskDao());
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void startAddActivity() {
+        Intent intent = new Intent(this, AddTaskActivity.class);
+        startActivityForResult(intent, ADD_TASK_CODE);
     }
 
 

@@ -5,18 +5,38 @@
     android:layout_height="match_parent"
     tools:context="ru.dmitriylebyodkin.timemanager.Activities.TasksActivity">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="25dp"
-        android:layout_marginRight="25dp"
-        android:src="@drawable/plus"/>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/listTasks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:id="@+id/layoutAdd"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:textColor="#4A4A4A"
+            android:text="У вас ещё нет\n ни одного занятия"/>
+
+        <Button
+            android:id="@+id/btnCreate"
+            android:layout_width="210dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/btn_create"
+            android:textSize="24sp"
+            android:text="Создать"
+            android:elevation="10dp"
+            android:textColor="@color/green"/>
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

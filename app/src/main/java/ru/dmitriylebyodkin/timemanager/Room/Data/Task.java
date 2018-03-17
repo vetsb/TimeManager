@@ -15,11 +15,19 @@ public class Task {
             "часы",
     };
 
+    public static final String[] DIFFICULTIES = new String[] {
+            "Низкий",
+            "Средний",
+            "Высокий"
+    };
+
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String title;
     private int planTime;
     private int unit;
+    private String description;
+    private int difficulty;
     private int timestampStart;
     private int timestampDeadline;
     private int createdAt = (int) (System.currentTimeMillis()/1000L);
@@ -55,6 +63,22 @@ public class Task {
 
     public void setUnit(int unit) {
         this.unit = unit;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
     }
 
     public int getTimestampStart() {

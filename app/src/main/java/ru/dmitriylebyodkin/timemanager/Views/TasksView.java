@@ -19,4 +19,6 @@ public interface TasksView extends MvpView {
     void clearList();
 
     void deleteTask(int position, int id);
+
+    void checkAndHiddenList();
 }

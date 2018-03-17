@@ -12,6 +12,12 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = @ForeignKey(entity = Execution.class, parentColumns = "id", childColumns = "executionId", onDelete = CASCADE))
 public class ExItem {
+    public static final String[] STATUSES = new String[] {
+            "Непродуктивно",
+            "Продуктивно",
+            "Очень продуктивно"
+    };
+
     @PrimaryKey(autoGenerate = true)
     private int id;
     private int executionId;

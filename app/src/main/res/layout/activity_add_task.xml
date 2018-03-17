@@ -2,86 +2,107 @@
 <ScrollView android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:focusable="false">
     <LinearLayout
-        style="@style/MainLayout"
-        xmlns:android="http://schemas.android.com/apk/res/android">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <android.support.design.widget.TextInputLayout
+        <EditText
+            android:id="@+id/etTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TextInputLayout">
-            <EditText
-                android:id="@+id/etTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/title"
-                style="@style/EditText"
-                android:textSize="24sp"
-                android:textStyle="bold"/>
-        </android.support.design.widget.TextInputLayout>
+            android:layout_height="82dp"
+            android:hint="@string/title"
+            android:textColorHint="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:background="@android:color/transparent"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:id="@+id/layoutDescription"
+            style="@style/MenuRow">
+            <LinearLayout style="@style/MenuImage">
+                <ImageView
+                    style="@style/MenuImageView"
+                    android:background="@drawable/pencil_red"/>
+            </LinearLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                style="@style/TextInputLayout">
-                <EditText
-                    android:id="@+id/etPlanTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/plan_time"
-                    style="@style/EditText"
-                    android:inputType="number"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginEnd="20dp" />
-            </android.support.design.widget.TextInputLayout>
-
-            <Spinner
-                android:id="@+id/spinnerTimeUnit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/Spinner"
-                android:layout_marginTop="13dp"
-                android:layout_marginBottom="0dp"
-                android:spinnerMode="dialog"/>
+            <LinearLayout style="@style/MenuContent">
+                <TextView
+                    android:id="@+id/tvDescription"
+                    android:text="@string/add_description"
+                    style="@style/MenuTextView"/>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/tvDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/date_start"
-                style="@style/TvEditText"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp" />
+            android:id="@+id/layoutDifficulty"
+            style="@style/MenuRow">
+            <LinearLayout style="@style/MenuImage">
+                <ImageView
+                    style="@style/MenuImageView"
+                    android:background="@drawable/star_red"/>
+            </LinearLayout>
 
-            <TextView
-                android:text="—"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="26sp"
-                android:textColor="#333333"
-                android:layout_marginTop="3dp"/>
-            <TextView
-                android:id="@+id/tvDeadline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/date_deadline"
-                style="@style/TvEditText"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp" />
+            <LinearLayout style="@style/MenuContent">
+                <TextView
+                    android:id="@+id/tvDifficulty"
+                    android:text="@string/difficulty_level"
+                    style="@style/MenuTextView"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutDateStart"
+            style="@style/MenuRow">
+            <LinearLayout style="@style/MenuImage">
+                <ImageView
+                    style="@style/MenuImageView"
+                    android:background="@drawable/calendar_red"/>
+            </LinearLayout>
+
+            <LinearLayout style="@style/MenuContent">
+                <TextView
+                    android:id="@+id/tvDateStart"
+                    android:text="@string/date_start"
+                    style="@style/MenuTextView"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutDeadline"
+            style="@style/MenuRow">
+            <LinearLayout style="@style/MenuImage">
+                <ImageView
+                    style="@style/MenuImageView"
+                    android:background="@drawable/calendar_red"/>
+            </LinearLayout>
+
+            <LinearLayout style="@style/MenuContent">
+                <TextView
+                    android:id="@+id/tvDeadline"
+                    android:text="@string/date_deadline"
+                    style="@style/MenuTextView"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutPlanTime"
+            style="@style/MenuRow">
+            <LinearLayout style="@style/MenuImage">
+                <ImageView
+                    style="@style/MenuImageView"
+                    android:background="@drawable/clock_red"/>
+            </LinearLayout>
+
+            <LinearLayout style="@style/MenuContent">
+                <TextView
+                    android:id="@+id/tvPlanTime"
+                    android:text="@string/plan_time"
+                    style="@style/MenuTextView"/>
+            </LinearLayout>
         </LinearLayout>
 
         <TextView
@@ -90,6 +111,11 @@
             android:layout_height="wrap_content"
             android:text="@string/delete"
             android:textSize="14sp"
-            android:textColor="#FF0000"/>
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"/>
     </LinearLayout>
 </ScrollView>

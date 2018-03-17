@@ -33,8 +33,8 @@ public interface ExItemDao {
     @Query("SELECT * FROM ExItem WHERE executionId=:id")
     List<ExItem> getByExecutionId(int id);
 
-    @Query("SELECT SUM(seconds) FROM ExItem WHERE id=:id")
-    int getSumTime(int id);
+    @Query("SELECT SUM(seconds) FROM ExItem WHERE executionId=:executionId")
+    int getSumTime(int executionId);
 
     @Insert
     long[] insert(ExItem... exItems);
@@ -44,11 +44,5 @@ public interface ExItemDao {
 
     @Delete
     void delete(ExItem... exItem);
-
-    @Query("UPDATE ExItem SET isStart=1")
-    void updateStart();
-
-    @Query("UPDATE ExItem SET isStart=0")
-    void updateStart2();
 
 }

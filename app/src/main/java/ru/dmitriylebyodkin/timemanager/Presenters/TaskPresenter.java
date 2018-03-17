@@ -79,4 +79,8 @@ public class TaskPresenter extends MvpPresenter<TaskView> {
     public void delete(TaskDao taskDao, int id) {
         TaskModel.delete(taskDao, id);
     }
+
+    public void showDeleteDialog() {
+        getViewState().showDeleteDialog();
+    }
 }

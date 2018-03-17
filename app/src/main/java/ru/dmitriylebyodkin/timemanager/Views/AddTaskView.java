@@ -11,7 +11,26 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface AddTaskView extends MvpView {
 
+    void showDescriptionDialog();
+
+    void updateDescription(String text);
+
+    void showDifficultyDialog();
+
+    void updateDifficulty(int i);
+
+    void showDeadlinesDialog(boolean isStart);
+
+    void updateDateStart(long millis);
+
+    void updateDeadline(long millis);
+
+    void showPlanTimeDialog();
+
+    void updatePlanTime(int time, int unit);
+
     void finishEdit();
 
     void finishAdd(long taskId);
+
 }

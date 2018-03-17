@@ -27,6 +27,7 @@ import ru.dmitriylebyodkin.timemanager.R;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Execution;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Task;
 import ru.dmitriylebyodkin.timemanager.Room.Data.TaskWithExecutions;
+import ru.dmitriylebyodkin.timemanager.Room.RoomDb;
 
 /**
  * Created by dmitr on 08.03.2018.
@@ -45,36 +46,48 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private LinearLayout container, layoutTimeLeft;
-        private TextView tvTitle, tvRunningTime, tvTimeLeft, tvRun, tvReadMore;
-        private View viewLine;
+        private LinearLayout container;
+        private TextView tvTitle, tvRunningTime, tvTimeLeft;
         private SwipeRevealLayout swipeRevealLayout;
-        private Button btnEdit, btnDelete;
+        private LinearLayout layoutEdit, layoutDelete;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             container = itemView.findViewById(R.id.container);
-            layoutTimeLeft = itemView.findViewById(R.id.layoutTimeLeft);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvRunningTime = itemView.findViewById(R.id.tvRunningTime);
             tvTimeLeft = itemView.findViewById(R.id.tvTimeLeft);
-            tvRun = itemView.findViewById(R.id.tvRun);
-            tvReadMore = itemView.findViewById(R.id.tvReadMore);
-            viewLine = itemView.findViewById(R.id.viewLine);
             swipeRevealLayout = itemView.findViewById(R.id.swipeRevealLayout);
-            btnEdit = itemView.findViewById(R.id.btnEdit);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
+            layoutEdit = itemView.findViewById(R.id.layoutEdit);
+            layoutDelete = itemView.findViewById(R.id.layoutDelete);
         }
     }
 
-    public void updateList(List<TaskWithExecutions> data) {
-        this.mData = data;
+    public void add(TaskWithExecutions taskWithExecutions) {
+        if (getItemCount() == 0) {
+            mData.add(0, taskWithExecutions);
+        } else {
+            mData.add(taskWithExecutions);
+        }
+
         this.notifyDataSetChanged();
     }
 
+    public void clear() {
+        mData = null;
+        this.notifyDataSetChanged();
+    }
+
+    public void remove(int position) {
+        mData.remove(position);
+        this.notifyItemRemoved(position);
+        this.notifyItemRangeChanged(position, mData.size());
+    }
+
     public void setList(List<TaskWithExecutions> data) {
-        this.mData = data;
+        mData = data;
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -88,13 +101,13 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
         );
     }
 
-    public void saveStates(Bundle outState) {
-        viewBinderHelper.saveStates(outState);
-    }
-
-    public void restoreStates(Bundle inState) {
-        viewBinderHelper.restoreStates(inState);
-    }
+//    public void saveStates(Bundle outState) {
+//        viewBinderHelper.saveStates(outState);
+//    }
+//
+//    public void restoreStates(Bundle inState) {
+//        viewBinderHelper.restoreStates(inState);
+//    }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
@@ -103,11 +116,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
 
         viewBinderHelper.bind(holder.swipeRevealLayout, String.valueOf(task.getId()));
 
-        holder.btnDelete.setOnClickListener(view -> {
+        holder.layoutDelete.setOnClickListener(view -> {
             ((TasksActivity) context).deleteTask(position, task.getId());
         });
 
-        holder.btnEdit.setOnClickListener(view -> {
+        holder.layoutEdit.setOnClickListener(view -> {
             Intent intent = new Intent(context, AddTaskActivity.class);
             intent.putExtra("id", task.getId());
             intent.putExtra("title", task.getTitle());
@@ -128,6 +141,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
             intent.putExtra("title", task.getTitle());
             intent.putExtra("unit", task.getUnit());
             intent.putExtra("plan_time", task.getPlanTime());
+            intent.putExtra("description", task.getDescription());
+            intent.putExtra("difficulty", task.getDifficulty());
             intent.putExtra("timestamp_start", task.getTimestampStart());
             intent.putExtra("timestamp_deadline", task.getTimestampDeadline());
             ((TasksActivity) context).startActivityForResult(intent, TasksActivity.TASK_CODE);
@@ -142,7 +157,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
         int time = 0;
 
         for (Execution execution: listExecutions) {
-//            time += execution.getTime();
+            time += RoomDb.getInstance(context).getExItemDao().getSumTime(execution.getId());
         }
 
         if (time == 0) {
@@ -188,34 +203,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
             }
 
             holder.tvTimeLeft.setText(timeLeftText);
-        }
-
-        /**
-         * Клик на кнопку ВЫПОЛНЯТЬ СЕЙЧАС
-         */
-        holder.tvRun.setOnClickListener(view -> {
-            Intent intent = new Intent(context, RunTaskActivity.class);
-            intent.putExtra("task_id", task.getId());
-            context.startActivity(intent);
-        });
-
-        /**
-         * Клик на кнопку ПОДРОБНЕЕ
-         */
-//        holder.tvReadMore.setOnClickListener(view -> {
-//            Intent intent = new Intent(context, TaskActivity.class);
-//            intent.putExtra("position", position);
-//            intent.putExtra("id", task.getId());
-//            intent.putExtra("title", task.getTitle());
-//            context.startActivity(intent);
-//        });
-
-
-        /**
-         * У последнего элемента удаляется нижняя линия
-         */
-        if (position+1 == mData.size()) {
-            holder.viewLine.setVisibility(View.GONE);
         }
     }
 

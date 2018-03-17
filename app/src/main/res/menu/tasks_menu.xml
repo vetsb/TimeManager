@@ -5,4 +5,9 @@
         android:id="@+id/navDeleteAll"
         android:title="Удалить все"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/navAdd"
+        android:title=""
+        android:icon="@drawable/plus"
+        app:showAsAction="ifRoom"/>
 </menu>

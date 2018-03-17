@@ -35,10 +35,6 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
         this.mData = data;
     }
 
-    public void setList(List<ExecutionWithItems> data) {
-        this.mData = data;
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView tvDate, tvStart, tvTime, tvStatus;
         private TimelineView mTimelineView;
@@ -57,8 +53,8 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
         }
     }
 
-    public void updateList(List<ExecutionWithItems> data) {
-        this.mData = data;
+    public void setList(List<ExecutionWithItems> data) {
+        mData = data;
         this.notifyDataSetChanged();
     }
 

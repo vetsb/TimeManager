@@ -36,8 +36,14 @@
     <string name="success_edit">Занятие изменено</string>
     <string name="delete">Удалить</string>
     <string name="success_delete">Занятие удалено</string>
-    <string name="timer_stop_button">Stop</string>
-    <string name="timer_start_button">Start</string>
-
-    <string name="reset">Reset</string>
+    <string name="add_description">Добавить описание</string>
+    <string name="difficulty_level">Уровень сложности</string>
+    <string name="deadlines">Сроки</string>
+    <string name="adding_description">Описание</string>
+    <string name="description">Описание:</string>
+    <string name="description_hint">Опишите свое занятие</string>
+    <string name="day">День</string>
+    <string name="start2">Начало</string>
+    <string name="end">Завершение</string>
+    <string name="not_specified">Не указан</string>
 </resources>
