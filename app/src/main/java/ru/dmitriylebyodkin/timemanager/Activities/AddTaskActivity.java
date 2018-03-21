@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,12 +21,15 @@ import com.shagi.materialdatepicker.date.DatePickerFragmentDialog;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ru.dmitriylebyodkin.timemanager.Adapters.LabelAdapter;
 import ru.dmitriylebyodkin.timemanager.App;
 import ru.dmitriylebyodkin.timemanager.Presenters.AddTaskPresenter;
 import ru.dmitriylebyodkin.timemanager.R;
+import ru.dmitriylebyodkin.timemanager.Room.Data.Label;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Task;
 import ru.dmitriylebyodkin.timemanager.Room.RoomDb;
 import ru.dmitriylebyodkin.timemanager.Views.AddTaskView;
@@ -37,6 +41,8 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
 
     @BindView(R.id.layoutDescription)
     LinearLayout layoutDescription;
+    @BindView(R.id.layoutLabel)
+    LinearLayout layoutLabel;
     @BindView(R.id.layoutDifficulty)
     LinearLayout layoutDifficulty;
     @BindView(R.id.layoutDateStart)
@@ -51,6 +57,8 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
 
     @BindView(R.id.tvDescription)
     TextView tvDescription;
+    @BindView(R.id.tvLabel)
+    TextView tvLabel;
     @BindView(R.id.tvDifficulty)
     TextView tvDifficulty;
     @BindView(R.id.tvDateStart)
@@ -70,6 +78,8 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
     private MenuItem gMenuItem;
     private Intent intent;
     private boolean isEditable = false;
+    private List<Label> labelList;
+    private LabelAdapter labelAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +91,11 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
 
         roomDb = RoomDb.getInstance(this);
         task = new Task();
+        task.setUnit(-1);
+        task.setDifficulty(-1);
+        task.setLabel(-1);
+
+        labelList = roomDb.getLabelDao().getAll();
 
         /**
          * Добавление текста в поля дат (изменение занятия) и показ кнопки удаления
@@ -91,6 +106,7 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
         }
 
         layoutDescription.setOnClickListener(view -> presenter.showDescriptionDialog());
+        layoutLabel.setOnClickListener(view -> presenter.showLabelDialog());
         layoutDifficulty.setOnClickListener(view -> presenter.showDifficultyDialog());
         layoutDateStart.setOnClickListener(view -> presenter.showDeadlinesDialog(true));
         layoutDeadline.setOnClickListener(view -> presenter.showDeadlinesDialog(false));
@@ -104,11 +120,14 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
 
             String title = intent.getStringExtra("title");
             String description = intent.getStringExtra("description");
-            int difficulty = intent.getIntExtra("difficulty", 0);
+            int difficulty = intent.getIntExtra("difficulty", -1);
+            int label = intent.getIntExtra("label", -1);
             int timestampStart = intent.getIntExtra("timestamp_start", 0);
             int timestampDeadline = intent.getIntExtra("timestamp_deadline", 0);
             int planTime = intent.getIntExtra("plan_time", 0);
-            int unit = intent.getIntExtra("unit", 0);
+            int unit = intent.getIntExtra("unit", -1);
+
+            Log.d(TAG, "onCreate: " + label);
 
             if (title != null && title.length() > 0) {
                 task.setTitle(intent.getStringExtra("title"));
@@ -120,8 +139,24 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
                 presenter.updateDescription(description);
             }
 
-            if (difficulty != 0) {
+            if (difficulty != -1) {
                 presenter.updateDifficulty(difficulty);
+            }
+
+            if (label != -1) {
+//                int i = 0;
+//                int position = 0;
+//
+//                for (Label labelItem: labelList) {
+//                    if (labelItem.getId() == label) {
+//                        position = i;
+//                        break;
+//                    }
+//                    i++;
+//                }
+//
+//                presenter.updateLabel(position, label);
+                presenter.updateLabel(label);
             }
 
             if (timestampStart != 0) {
@@ -169,7 +204,6 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
 
     public Task getTask() {
         task.setTitle(getTaskTitle());
-
         return task;
     }
 
@@ -385,10 +419,82 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
     }
 
     @Override
+    public void showLabelDialog() {
+//        View view = getLayoutInflater().inflate(R.layout.dialog_add_label, null);
+//        ListView listView = view.findViewById(R.id.listView);
+
+        int checkedItem = 0;
+
+        if (task.getLabel() != -1) {
+            checkedItem = task.getLabel();
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.label);
+        builder.setSingleChoiceItems(Task.LABELS, checkedItem, null);
+        builder.setPositiveButton(R.string.add, (dialogInterface, i) -> {
+            presenter.updateLabel(((AlertDialog) dialogInterface).getListView().getCheckedItemPosition());
+        });
+//        builder.setView(view);
+//        builder.setPositiveButton(R.string.add, (dialogInterface, i) -> {
+//            View newView = getLayoutInflater().inflate(R.layout.dialog_new_label, null);
+//            EditText etTitle = newView.findViewById(R.id.etTitle);
+//
+//            AlertDialog.Builder newBuilder = new AlertDialog.Builder(this);
+//            newBuilder.setTitle(R.string.new_label);
+//            newBuilder.setPositiveButton(R.string.add, (dialogInterface2, i2) -> {
+//                String title = etTitle.getText().toString().trim();
+//
+//                if (!title.equals("")) {
+//                    long labelId = presenter.addLabel(roomDb, etTitle.getText().toString().trim());
+//
+//                    Label label = new Label();
+//                    label.setImageId((int) labelId);
+//                    label.setTitle(title);
+//
+//                    labelList.add(label);
+//
+//                    presenter.updateLabel(labelList.size()-1, (int) labelId);
+//                }
+//
+//                dialogInterface2.dismiss();
+//            });
+//            newBuilder.setNeutralButton(R.string.cancel, (dialogInterface2, i2) -> builder.create().show());
+//            newBuilder.setView(newView);
+//            newBuilder.create().show();
+//        });
+        builder.setNeutralButton(R.string.cancel, null);
+        builder.create().show();
+
+//        AlertDialog alertDialog = builder.create();
+//        alertDialog.show();
+
+//        labelAdapter = new LabelAdapter(this, labelList);
+//        listView.setAdapter(labelAdapter);
+//        listView.setOnItemClickListener((adapterView, view1, i, l) -> {
+//            presenter.updateLabel(i, (int) adapterView.getAdapter().getItemId(i));
+//            alertDialog.dismiss();
+//        });
+
+    }
+
+    @Override
+    public void updateLabel(int position) {
+        tvLabel.setText(Task.LABELS[position]);
+        task.setLabel(position);
+    }
+
+    @Override
+    public void addLabel(Label label) {
+        labelList.add(label);
+    }
+
+    @Override
     public void finishEdit() {
         intent.putExtra("title", task.getTitle());
         intent.putExtra("plan_time", task.getPlanTime());
         intent.putExtra("unit", task.getUnit());
+        intent.putExtra("label", task.getLabel());
         intent.putExtra("description", task.getDescription());
         intent.putExtra("difficulty", task.getDifficulty());
         intent.putExtra("timestamp_start", task.getTimestampStart());
@@ -406,6 +512,7 @@ public class AddTaskActivity extends MvpAppCompatActivity implements AddTaskView
         intent.putExtra("title", task.getTitle());
         intent.putExtra("plan_time", task.getPlanTime());
         intent.putExtra("unit", task.getUnit());
+        intent.putExtra("label", task.getLabel());
 
         setResult(RESULT_OK, intent);
         finish();

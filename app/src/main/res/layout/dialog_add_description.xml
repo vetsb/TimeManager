@@ -12,5 +12,6 @@
         android:textSize="16sp"
         android:gravity="top"
         android:hint="@string/description_hint"
-        android:minHeight="100dp"/>
+        android:minHeight="150dp"
+        android:focusable="true"/>
 </LinearLayout>

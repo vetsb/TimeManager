@@ -36,6 +36,8 @@ public class TasksPresenter extends MvpPresenter<TasksView> {
         task.setTitle(data.getStringExtra("title"));
         task.setPlanTime(data.getIntExtra("plan_time", 0));
         task.setUnit(data.getIntExtra("unit", 0));
+        task.setLabel(data.getIntExtra("label", 0));
+        task.setDifficulty(data.getIntExtra("difficulty", 0));
 
         Execution execution = new Execution();
         execution.setTaskId(data.getIntExtra("id", 0));

@@ -23,6 +23,7 @@ import butterknife.ButterKnife;
 import ru.dmitriylebyodkin.timemanager.Adapters.TasksAdapter;
 import ru.dmitriylebyodkin.timemanager.Presenters.TasksPresenter;
 import ru.dmitriylebyodkin.timemanager.R;
+import ru.dmitriylebyodkin.timemanager.Room.Data.Label;
 import ru.dmitriylebyodkin.timemanager.Room.Data.TaskWithExecutions;
 import ru.dmitriylebyodkin.timemanager.Room.RoomDb;
 import ru.dmitriylebyodkin.timemanager.Views.TasksView;
@@ -62,6 +63,20 @@ public class TasksActivity extends MvpAppCompatActivity implements TasksView {
 
         roomDb = RoomDb.getInstance(this);
         listTasks = roomDb.getTaskDao().getTasksWithExecutions();
+
+//        Label label1 = new Label();
+//        label1.setImageId(R.drawable.work);
+//        label1.setTitle("Работа");
+//
+//        Label label2 = new Label();
+//        label2.setImageId(R.drawable.home);
+//        label2.setTitle("Дом");
+//
+//        Label label3 = new Label();
+//        label3.setImageId(R.drawable.family);
+//        label3.setTitle("Семья");
+//
+//        roomDb.getLabelDao().insert(label1, label2, label3);
 
         presenter.checkAndHiddenList();
     }

@@ -1,13 +1,17 @@
 package ru.dmitriylebyodkin.timemanager.Presenters;
 
+import android.util.Log;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
 import java.util.Calendar;
 
 import ru.dmitriylebyodkin.timemanager.App;
+import ru.dmitriylebyodkin.timemanager.Models.LabelModel;
 import ru.dmitriylebyodkin.timemanager.Models.TaskModel;
 import ru.dmitriylebyodkin.timemanager.Room.Dao.TaskDao;
+import ru.dmitriylebyodkin.timemanager.Room.Data.Label;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Task;
 import ru.dmitriylebyodkin.timemanager.Room.RoomDb;
 import ru.dmitriylebyodkin.timemanager.Views.AddTaskView;
@@ -18,6 +22,8 @@ import ru.dmitriylebyodkin.timemanager.Views.AddTaskView;
 
 @InjectViewState
 public class AddTaskPresenter extends MvpPresenter<AddTaskView> {
+    private static final String TAG = "myLogs";
+
     public AddTaskPresenter() {
 
     }
@@ -32,6 +38,7 @@ public class AddTaskPresenter extends MvpPresenter<AddTaskView> {
 
     public void addTask(RoomDb roomDb, Task task) {
         long taskId = TaskModel.insert(roomDb, task);
+        Log.d(TAG, "addTask: " + task.getLabel());
 
         getViewState().finishAdd(taskId);
     }
@@ -72,5 +79,23 @@ public class AddTaskPresenter extends MvpPresenter<AddTaskView> {
 
     public void updatePlanTime(int time, int unit) {
         getViewState().updatePlanTime(time, unit);
+    }
+
+    public void showLabelDialog() {
+        getViewState().showLabelDialog();
+    }
+
+    public void updateLabel(int position) {
+        getViewState().updateLabel(position);
+    }
+
+    public long addLabel(RoomDb roomDb, String title) {
+        Label label = new Label();
+        label.setTitle(title);
+        label.setImageId(0);
+
+//        getViewState().addLabel(label);
+
+        return LabelModel.insert(roomDb, label);
     }
 }

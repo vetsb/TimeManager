@@ -4,6 +4,8 @@ import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
+import ru.dmitriylebyodkin.timemanager.Room.Data.Label;
+
 /**
  * Created by dmitr on 08.03.2018.
  */
@@ -29,8 +31,13 @@ public interface AddTaskView extends MvpView {
 
     void updatePlanTime(int time, int unit);
 
+    void showLabelDialog();
+
+    void updateLabel(int position);
+
+    void addLabel(Label label);
+
     void finishEdit();
 
     void finishAdd(long taskId);
-
 }

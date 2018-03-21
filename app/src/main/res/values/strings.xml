@@ -46,4 +46,10 @@
     <string name="start2">Начало</string>
     <string name="end">Завершение</string>
     <string name="not_specified">Не указан</string>
+    <string name="completed">Завершено</string>
+    <string name="finish">Финиш</string>
+    <string name="category">Категория</string>
+    <string name="label">Метка</string>
+    <string name="completion_task_edittext_hint">Опишите, что вы сделали в течение этого времени</string>
+    <string name="new_label">Новая метка</string>
 </resources>

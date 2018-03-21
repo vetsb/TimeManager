@@ -1,20 +1,16 @@
 package ru.dmitriylebyodkin.timemanager.Activities;
 
-import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -30,7 +26,6 @@ import ru.dmitriylebyodkin.timemanager.Presenters.TaskPresenter;
 import ru.dmitriylebyodkin.timemanager.R;
 import ru.dmitriylebyodkin.timemanager.Room.Dao.ExecutionDao;
 import ru.dmitriylebyodkin.timemanager.Room.Data.ExItem;
-import ru.dmitriylebyodkin.timemanager.Room.Data.Execution;
 import ru.dmitriylebyodkin.timemanager.Room.Data.ExecutionWithItems;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Task;
 import ru.dmitriylebyodkin.timemanager.Room.RoomDb;
@@ -71,6 +66,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
     private ExecutionDao executionDao;
     private TimeLineAdapter timeLineAdapter;
     private boolean hasChanges = false;
+    private MenuItem menuItemRun;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +96,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
 
         int difficulty = intent.getIntExtra("difficulty", 0);
 
-        if (difficulty == 0) {
+        if (difficulty == -1) {
             tvDifficulty.setText(getString(R.string.not_specified));
         } else {
             tvDifficulty.setText(Task.DIFFICULTIES[difficulty]);
@@ -124,7 +120,40 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.task_menu, menu);
+        menuItemRun = menu.getItem(0);
+        checkMenuItemRun();
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void checkMenuItemRun() {
+        Task task = new Task();
+        task.setId(taskId);
+        task.setUnit(intent.getIntExtra("unit", 0));
+        task.setPlanTime(intent.getIntExtra("plan_time", 0));
+
+        int planSeconds = task.getPlanSeconds();
+
+        if (planSeconds == 0) {
+            menuItemRun.setVisible(true);
+        } else {
+            executionDao = RoomDb.getInstance(this).getExecutionDao();
+            listExecutions = executionDao.getWithItemsById(taskId);
+
+            int time = 0;
+
+            for (ExecutionWithItems executionWithItems: listExecutions) {
+                for (ExItem exItem: executionWithItems.getItems()) {
+                    time += exItem.getSeconds();
+                }
+            }
+
+            if (time >= planSeconds) {
+                menuItemRun.setVisible(false);
+            } else {
+                menuItemRun.setVisible(true);
+            }
+        }
     }
 
     @Override
@@ -165,24 +194,36 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
         } else {
             switch (intent.getIntExtra("unit", -1)) {
                 case 0:
-                    timeLeftText = App.formatSeconds(planTime-time);
+                    if (time >= planTime) {
+                        timeLeftText = getString(R.string.completed);
+                    } else {
+                        timeLeftText = App.formatSeconds(planTime-time);
+                    }
                     break;
                 case 1:
-                    timeLeftText = App.formatSeconds(planTime*60-time);
+                    if (time >= planTime*60) {
+                        timeLeftText = getString(R.string.completed);
+                    } else {
+                        timeLeftText = App.formatSeconds(planTime*60-time);
+                    }
                     break;
                 case 2:
-                    calendar.setTimeInMillis((planTime*60*60-time)*1000L);
-
-                    int calendarHours = (planTime*60*60-time)/60/60;
-                    int calendarMinutes = calendar.get(Calendar.MINUTE);
-
-                    if (calendarHours == 0) {
-                        timeLeftText = calendarMinutes + " " + App.formatWord(calendarMinutes, new String[] {"минута", "минуты", "минут"});
+                    if (time >= planTime*60*60) {
+                        timeLeftText = getString(R.string.completed);
                     } else {
-                        timeLeftText = calendarHours + " " + App.formatWord(calendarHours, new String[] {"час", "часа", "часов"});
+                        calendar.setTimeInMillis((planTime*60*60-time)*1000L);
 
-                        if (calendarMinutes != 0) {
-                            timeLeftText += " " + calendarMinutes + " " + App.formatWord(calendarMinutes, new String[] {"минута", "минуты", "минут"});
+                        int calendarHours = (planTime*60*60-time)/60/60;
+                        int calendarMinutes = calendar.get(Calendar.MINUTE);
+
+                        if (calendarHours == 0) {
+                            timeLeftText = calendarMinutes + " " + App.formatWord(calendarMinutes, new String[] {"минута", "минуты", "минут"});
+                        } else {
+                            timeLeftText = calendarHours + " " + App.formatWord(calendarHours, new String[] {"час", "часа", "часов"});
+
+                            if (calendarMinutes != 0) {
+                                timeLeftText += " " + calendarMinutes + " " + App.formatWord(calendarMinutes, new String[] {"минута", "минуты", "минут"});
+                            }
                         }
                     }
                     break;
@@ -244,7 +285,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
 
     @Override
     public void setAdapter() {
-        timeLineAdapter = new TimeLineAdapter(this, listExecutions);
+        timeLineAdapter = new TimeLineAdapter(this, listExecutions, intent);
         recyclerView.setAdapter(timeLineAdapter);
     }
 
@@ -256,6 +297,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
             listExecutions = executionDao.getWithItemsById(taskId);
             timeLineAdapter.setList(listExecutions);
 
+            checkMenuItemRun();
             updateTimes();
         }
 
@@ -273,12 +315,16 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
 
                 intent.putExtras(data.getExtras());
 
-                if (title.equals("")) {
-                    setTitle(title);
+                if (title != null && !title.equals("")) {
+                    tvTitle.setText(title);
                     hasChanges = true;
                 }
 
-                if (description.equals("")) {
+                if (description != null && !description.equals("")) {
+                    if (tvDescription.getVisibility() == View.GONE) {
+                        tvDescription.setVisibility(View.VISIBLE);
+                    }
+
                     tvDescription.setText(description);
                     hasChanges = true;
                 }
@@ -288,6 +334,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
                     hasChanges = true;
                 }
 
+                checkMenuItemRun();
                 updateTimes();
             }
 
@@ -303,7 +350,7 @@ public class TaskActivity extends MvpAppCompatActivity implements TaskView {
     @Override
     public void updateAdapter() {
         listExecutions = executionDao.getWithItemsById(taskId);
-        timeLineAdapter = new TimeLineAdapter(this, listExecutions);
+        timeLineAdapter = new TimeLineAdapter(this, listExecutions, intent);
         recyclerView.setAdapter(timeLineAdapter);
     }
 }

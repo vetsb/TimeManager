@@ -1,6 +1,7 @@
 package ru.dmitriylebyodkin.timemanager.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +19,7 @@ import ru.dmitriylebyodkin.timemanager.R;
 import ru.dmitriylebyodkin.timemanager.Room.Data.ExItem;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Execution;
 import ru.dmitriylebyodkin.timemanager.Room.Data.ExecutionWithItems;
+import ru.dmitriylebyodkin.timemanager.Room.Data.Task;
 import ru.dmitriylebyodkin.timemanager.Room.RoomDb;
 
 
@@ -29,10 +31,12 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
     private static final String TAG = "myLogs";
     private Context context;
     private List<ExecutionWithItems> mData;
+    private Intent taskIntent;
 
-    public TimeLineAdapter(Context context, List<ExecutionWithItems> data) {
+    public TimeLineAdapter(Context context, List<ExecutionWithItems> data, Intent taskData) {
         this.context = context;
         this.mData = data;
+        this.taskIntent = taskData;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -103,6 +107,19 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
             holder.tvTime.setText("Ещё не начиналось");
         } else {
             holder.tvTime.setText(App.formatSeconds(time));
+        }
+
+        if (taskIntent.getIntExtra("plan_time", 0) != 0) {
+            if (position+1 == mData.size()) {
+                Task task = new Task();
+                task.setId(taskIntent.getIntExtra("id", 0));
+                task.setUnit(taskIntent.getIntExtra("unit", 0));
+                task.setPlanTime(taskIntent.getIntExtra("plan_time", 0));
+
+                if (time >= task.getPlanSeconds()) {
+                    holder.tvStart.setText(context.getString(R.string.finish));
+                }
+            }
         }
     }
 }

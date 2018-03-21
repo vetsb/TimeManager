@@ -22,6 +22,7 @@ public class ExItem {
     private int id;
     private int executionId;
     private int seconds;
+    private String description;
     private boolean isStart = false;
     private boolean isPause = false;
     private boolean isVisible = false;
@@ -49,6 +50,14 @@ public class ExItem {
 
     public void setSeconds(int seconds) {
         this.seconds = seconds;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean isStart() {

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.chauthai.swipereveallayout.ViewBinderHelper;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -37,8 +38,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
 
     private static final String TAG = "myLogs";
     private Context context;
-    private List<TaskWithExecutions> mData;
+    private List<TaskWithExecutions> mData = new ArrayList<>();
     private final ViewBinderHelper viewBinderHelper = new ViewBinderHelper();
+    private int openItem = -1;
 
     public TasksAdapter(Context context, List<TaskWithExecutions> data) {
         this.context = context;
@@ -66,16 +68,16 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
 
     public void add(TaskWithExecutions taskWithExecutions) {
         if (getItemCount() == 0) {
-            mData.add(0, taskWithExecutions);
-        } else {
             mData.add(taskWithExecutions);
+        } else {
+            mData.add(0, taskWithExecutions);
         }
 
         this.notifyDataSetChanged();
     }
 
     public void clear() {
-        mData = null;
+        mData = new ArrayList<>();
         this.notifyDataSetChanged();
     }
 
@@ -97,8 +99,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
                         parent.getContext()).inflate(R.layout.task_item,
                         parent,
                         false
-                )
-        );
+                ));
     }
 
 //    public void saveStates(Bundle outState) {
@@ -118,6 +119,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
 
         holder.layoutDelete.setOnClickListener(view -> {
             ((TasksActivity) context).deleteTask(position, task.getId());
+            viewBinderHelper.closeLayout(String.valueOf(task.getId()));
         });
 
         holder.layoutEdit.setOnClickListener(view -> {
@@ -125,21 +127,26 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
             intent.putExtra("id", task.getId());
             intent.putExtra("title", task.getTitle());
             intent.putExtra("unit", task.getUnit());
+            intent.putExtra("label", task.getLabel());
             intent.putExtra("plan_time", task.getPlanTime());
             intent.putExtra("timestamp_start", task.getTimestampStart());
             intent.putExtra("timestamp_deadline", task.getTimestampDeadline());
             ((TasksActivity) context).startActivityForResult(intent, TasksActivity.TASK_CODE);
+            viewBinderHelper.closeLayout(String.valueOf(task.getId()));
         });
 
         /**
          * Клик на весь элемент
          */
         holder.container.setOnClickListener(view -> {
+            Log.d(TAG, "onBindViewHolder: " + task.getLabel());
+
             Intent intent = new Intent(context, TaskActivity.class);
 //            intent.putExtra("position", position);
             intent.putExtra("id", task.getId());
             intent.putExtra("title", task.getTitle());
             intent.putExtra("unit", task.getUnit());
+            intent.putExtra("label", task.getLabel());
             intent.putExtra("plan_time", task.getPlanTime());
             intent.putExtra("description", task.getDescription());
             intent.putExtra("difficulty", task.getDifficulty());
@@ -179,24 +186,36 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
         } else {
             switch (task.getUnit()) {
                 case 0:
-                    timeLeftText = App.formatSeconds(planTime-time);
+                    if (time >= planTime) {
+                        timeLeftText = context.getString(R.string.completed);
+                    } else {
+                        timeLeftText = App.formatSeconds(planTime-time);
+                    }
                     break;
                 case 1:
-                    timeLeftText = App.formatSeconds(planTime*60-time);
+                    if (time >= planTime*60) {
+                        timeLeftText = context.getString(R.string.completed);
+                    } else {
+                        timeLeftText = App.formatSeconds(planTime*60-time);
+                    }
                     break;
                 case 2:
-                    calendar.setTimeInMillis((planTime*60*60-time)*1000L);
-
-                    int calendarHours = (planTime*60*60-time)/60/60;
-                    int calendarMinutes = calendar.get(Calendar.MINUTE);
-
-                    if (calendarHours == 0) {
-                        timeLeftText = calendarMinutes + " " + App.formatWord(calendarMinutes, new String[] {"минута", "минуты", "минут"});
+                    if (time >= planTime*60*60) {
+                        timeLeftText = context.getString(R.string.completed);
                     } else {
-                        timeLeftText = calendarHours + " " + App.formatWord(calendarHours, new String[] {"час", "часа", "часов"});
+                        calendar.setTimeInMillis((planTime*60*60-time)*1000L);
 
-                        if (calendarMinutes != 0) {
-                            timeLeftText += " " + calendarMinutes + " " + App.formatWord(calendarMinutes, new String[] {"минута", "минуты", "минут"});
+                        int calendarHours = (planTime*60*60-time)/60/60;
+                        int calendarMinutes = calendar.get(Calendar.MINUTE);
+
+                        if (calendarHours == 0) {
+                            timeLeftText = calendarMinutes + " " + App.formatWord(calendarMinutes, new String[] {"минута", "минуты", "минут"});
+                        } else {
+                            timeLeftText = calendarHours + " " + App.formatWord(calendarHours, new String[] {"час", "часа", "часов"});
+
+                            if (calendarMinutes != 0) {
+                                timeLeftText += " " + calendarMinutes + " " + App.formatWord(calendarMinutes, new String[] {"минута", "минуты", "минут"});
+                            }
                         }
                     }
                     break;

@@ -1,17 +1,23 @@
 package ru.dmitriylebyodkin.timemanager.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -26,6 +32,7 @@ import ru.dmitriylebyodkin.timemanager.Room.Dao.ExItemDao;
 import ru.dmitriylebyodkin.timemanager.Room.Dao.ExecutionDao;
 import ru.dmitriylebyodkin.timemanager.Room.Data.ExItem;
 import ru.dmitriylebyodkin.timemanager.Room.Data.Execution;
+import ru.dmitriylebyodkin.timemanager.Room.Data.Task;
 import ru.dmitriylebyodkin.timemanager.Room.RoomDb;
 import ru.dmitriylebyodkin.timemanager.Views.RunTaskView;
 
@@ -48,7 +55,7 @@ public class RunTaskActivity extends MvpAppCompatActivity implements RunTaskView
     private Disposable disposable;
     private long millis = 0;
     private RoomDb roomDb;
-    private int taskId;
+    private int taskId, planSeconds;
     private Execution newExecution;
     private ExecutionDao executionDao;
     private ExItemDao exItemDao;
@@ -125,6 +132,20 @@ public class RunTaskActivity extends MvpAppCompatActivity implements RunTaskView
             }
         }
 
+        Task task = roomDb.getTaskDao().getTaskById(taskId);
+
+        switch (task.getUnit()) {
+            case 0:
+                planSeconds = task.getPlanTime();
+                break;
+            case 1:
+                planSeconds = task.getPlanTime()*60;
+                break;
+            case 2:
+                planSeconds = task.getPlanTime()*60*60;
+                break;
+        }
+
         millis = exItem.getSeconds()*1000L;
 
         exItem.setVisible(true);
@@ -153,6 +174,15 @@ public class RunTaskActivity extends MvpAppCompatActivity implements RunTaskView
 
             if (seconds != 0) {
                 exItem.setSeconds(exItem.getSeconds()+1);
+
+                if (planSeconds != 0 && planSeconds <= seconds) {
+                    exItem.setPause(false);
+                    exItem.setStart(false);
+
+                    mChronometer.stop();
+                    Toast.makeText(this, "Занятие закончено", Toast.LENGTH_LONG).show();
+                }
+
                 exItemDao.update(exItem);
             }
         });
@@ -180,17 +210,32 @@ public class RunTaskActivity extends MvpAppCompatActivity implements RunTaskView
         btnComplete.setOnClickListener(view -> {
             presenter.stopStopWatch(false, false);
 
-            exItem.setStart(false);
-            exItem.setPause(false);
-            exItem.setVisible(false);
-            exItemDao.update(exItem);
+            View layout = getLayoutInflater().inflate(R.layout.dialog_add_description, null);
+            EditText etDescription = layout.findViewById(R.id.etDescription);
+            etDescription.setHint(R.string.completion_task_edittext_hint);
 
-//            exItem.setVisible(false);
-//            exItemDao.update(exItem);
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setTitle(R.string.completion_task);
+            alertDialog.setView(layout);
+            alertDialog.setPositiveButton(R.string.complete, (dialogInterface, i) -> {
+                String description = etDescription.getText().toString().trim();
 
-            intent.putExtra("ex_item_id", exItem.getId());
-            setResult(RESULT_OK, intent);
-            finish();
+                if (!description.equals("")) {
+                    exItem.setDescription(description);
+                }
+
+                exItem.setStart(false);
+                exItem.setPause(false);
+                exItem.setVisible(false);
+                exItemDao.update(exItem);
+                dialogInterface.dismiss();
+
+                intent.putExtra("ex_item_id", exItem.getId());
+                setResult(RESULT_OK, intent);
+                finish();
+            });
+            alertDialog.setNeutralButton(R.string.cancel, null);
+            alertDialog.create().show();
         });
     }
 
@@ -215,8 +260,26 @@ public class RunTaskActivity extends MvpAppCompatActivity implements RunTaskView
                                             disposable.dispose();
                                         }
                                     } else {
-                                        exItem.setSeconds(exItem.getSeconds() + 1);
-                                        exItemDao.update(exItem);
+                                        Task task = roomDb.getTaskDao().getTaskById(taskId);
+                                        int planSeconds = task.getPlanSeconds();
+
+                                        if (planSeconds == 0 || planSeconds > exItem.getSeconds() + 1) {
+                                            exItem.setSeconds(exItem.getSeconds() + 1);
+                                            exItemDao.update(exItem);
+                                        } else {
+                                            List<Execution> executionList = roomDb.getExecutionDao().getExecutionsByTaskId(taskId);
+                                            int time = 0;
+
+                                            for (Execution execution: executionList) {
+                                                time += roomDb.getExItemDao().getSumTime(execution.getId());
+                                            }
+
+                                            exItem.setStart(false);
+                                            exItem.setPause(false);
+                                            exItem.setSeconds(planSeconds - time);
+                                            exItemDao.update(exItem);
+                                            disposable.dispose();
+                                        }
                                     }
                                 } else {
                                     if (!disposable.isDisposed()) {

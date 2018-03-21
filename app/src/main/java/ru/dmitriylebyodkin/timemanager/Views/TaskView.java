@@ -12,6 +12,8 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 public interface TaskView extends MvpView {
     void updateTimes();
 
+    void checkMenuItemRun();
+
     void setAdapter();
 
     void updateAdapter();

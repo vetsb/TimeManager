@@ -38,6 +38,23 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layoutLabel"
+            style="@style/MenuRow">
+            <LinearLayout style="@style/MenuImage">
+                <ImageView
+                    style="@style/MenuImageView"
+                    android:background="@drawable/label_red"/>
+            </LinearLayout>
+
+            <LinearLayout style="@style/MenuContent">
+                <TextView
+                    android:id="@+id/tvLabel"
+                    android:text="@string/label"
+                    style="@style/MenuTextView"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/layoutDifficulty"
             style="@style/MenuRow">
             <LinearLayout style="@style/MenuImage">
